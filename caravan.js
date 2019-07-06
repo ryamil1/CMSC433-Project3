@@ -2,12 +2,13 @@ class Caravan {
 	constructor(day) {
 		this.day = day;
 		this.distance = 0;
+		this.target_distance = 102;
 		this.weather = "clear"; //getWeather; 
 		this.pace = 1;  //expecting ui to reach in to change this when appropriate
 		this.rations = 3; //expecting ui to reach in to change this when appropriate
 		this.starving = false; //managed in setFood
 		this.location = 0; //tracks if caravan has hit for laramie for distance calculations
-		this.nextLandmark = "ks river"; 
+		this.nextLandmark = "Kansas River Crossing"; //needs the ui to reach in and change this based on player decisions
 		this.eventLocked = 0; //tracks days which need to tick for multi-day events
 
 		this.members = [];
@@ -21,13 +22,7 @@ class Caravan {
 		this.money = 0;
 	}
 
-	getWeather(){
-		value = Math.floor(Math.random() * 100);
-		//Case for weather
-	}
-
 	getEvent(){
-		//random to get weather
 		//random to get event
 		//huge case statement
 			//each event controls the update of health and distance
@@ -63,7 +58,115 @@ class Caravan {
 		else{
 			this.distance += 20 * this.pace + other;
 		}
-		//huge case statement for landmarks
+		
+		if(this.nextLandmark == "Kansas River Crossing" && this.distance >= this.target_distance) {
+			this.nextLandmark = "Big Blue River Crossing";
+			this.distance = this.target_distance;
+			this.target_distance += 83;
+		}
+		else if(this.nextLandmark == "Big Blue River Crossing" && this.distance >= this.target_distance) {
+			this.nextLandmark = "Fort Kearney";
+			this.distance = this.target_distance;
+			this.target_distance += 119;
+		}
+		else if(this.nextLandmark == "Fort Kearney" && this.distance >= this.target_distance) {
+			this.nextLandmark = "Chimney Rock";
+			this.distance = this.target_distance;
+			this.target_distance += 250;
+		}
+		else if(this.nextLandmark == "Chimney Rock" && this.distance >= this.target_distance) {
+			this.nextLandmark = "Fort Laramie";
+			this.distance = this.target_distance;
+			this.target_distance += 86;
+		}
+		else if(this.nextLandmark == "Fort Laramie" && this.distance >= this.target_distance) {
+			this.nextLandmark = "Independence Rock";
+			this.distance = this.target_distance;
+			this.target_distance += 190;
+			this.location = 1;
+		}
+		else if(this.nextLandmark == "Independence Rock" && this.distance >= this.target_distance) {
+			this.nextLandmark = "South Pass";
+			this.distance = this.target_distance;
+			this.target_distance += 102;
+		}
+		else if(this.nextLandmark == "South Pass" && this.distance >= this.target_distance) {
+			this.nextLandmark = "flag1";
+			this.distance = this.target_distance;
+		}
+		else if(this.nextLandmark == "Green River" && this.distance >= this.target_distance) {
+			this.nextLandmark = "Soda Springs";
+			this.distance = this.target_distance;
+			this.target_distance += 144;
+		}
+		else if(this.nextLandmark == "Fort Bridger" && this.distance >= this.target_distance) {
+			this.nextLandmark = "Soda Springs";
+			this.distance = this.target_distance;
+			this.target_distance += 162;
+		}
+		else if(this.nextLandmark == "Soda Springs" && this.distance >= this.target_distance) {
+			this.nextLandmark = "Fort Hall";
+			this.distance = this.target_distance;
+			this.target_distance += 57;
+		}
+		else if(this.nextLandmark == "Fort Hall" && this.distance >= this.target_distance) {
+			this.nextLandmark = "Snake River Crossing";
+			this.distance = this.target_distance;
+			this.target_distance += 182;
+		}
+		else if(this.nextLandmark == "Snake River Crossing" && this.distance >= this.target_distance) {
+			this.nextLandmark = "Fort Boise";
+			this.distance = this.target_distance;
+			this.target_distance += 114;
+		}
+		else if(this.nextLandmark == "Fort Boise" && this.distance >= this.target_distance) {
+			this.nextLandmark = "Blue Mountains";
+			this.distance = this.target_distance;
+			this.target_distance += 160;
+		}
+		else if(this.nextLandmark == "Blue Mountains" && this.distance >= this.target_distance) {
+			this.nextLandmark = "flag2";
+			this.distance = this.target_distance;
+		}
+		else if(this.nextLandmark == "Fort Walla Walla" && this.distance >= this.target_distance) {
+			this.nextLandmark = "The Dalles";
+			this.distance = this.target_distance;
+			this.target_distance += 120;
+		}
+		else if(this.nextLandmark == "The Dalles" && this.distance >= this.target_distance) {
+			this.nextLandmark = "flag3";
+			this.distance = this.target_distance;
+		}
+		else if(this.nextLandmark == "Oregon" && this.distance >= this.target_distance) {
+			this.nextLandmark = "flag4";
+			this.distance = this.target_distance;
+		}
+	}
+
+	//Helper methods to handle forks.  Expecting UI to call these methods based on input.
+	goToGreenRiver(){
+		this.nextLandmark = "Green River";
+		this.target_distance += 57;
+	}
+
+	goToFortBridger(){
+		this.nextLandmark = "Fort Bridger";
+		this.target_distance += 125;
+	}
+
+	goToFortWallaWalla(){
+		this.nextLandmark = "Fort Walla Walla";
+		this.target_distance += 120;
+	}
+	
+	goToTheDalles(){
+		this.nextLandmark = "The Dalles";
+		this.target_distance += 125;
+	}
+
+	goToBarlowTollRoad(){
+		this.nextLandmark = "Oregon";
+		this.target_distance += 100;
 	}
 
 	//Rests for one day.
