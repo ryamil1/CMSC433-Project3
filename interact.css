@@ -1,0 +1,31 @@
+.header{
+	text-align: center
+}
+
+.frame{
+	position: absolute;
+	left:45px;
+	top:45px;
+	background-color:black;
+	height: 430px;
+	width: 510px;
+	
+}
+
+.frame-interact{
+	position: absolute;
+	left: 50px;
+	top: 50px;
+	height: 420px;
+	width: 500px;
+	color: white;
+	background-color: black;
+}
+
+.status{
+	padding-top: 5px;
+	padding-bottom: 5px;
+	color: black;
+	background-color: white;
+}
+

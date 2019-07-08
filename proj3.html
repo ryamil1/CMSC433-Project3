@@ -4,9 +4,11 @@
 	<script src="./person.js"></script>	
 	<script src="./caravan.js"></script>
 	<script src=" https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="interact.css">
 </head>
 	<script>
 		$('document').ready(function() {
+			var weather = "clear"
 			var caravan = new Caravan(1);
 			caravan.makeMember("Potato");
 			console.log(caravan.members);
@@ -21,15 +23,98 @@
 			console.log("Living check", caravan.checkForDead());
 			caravan.pace = 2;
 			for(var i = 0; i < 100; i++){
-				caravan.getEvent();
-				console.log("Rolling along", caravan.distance);
-				console.log("Living check", caravan.checkForDead());
-				console.log("Next landmark:", caravan.nextLandmark);
-				if(caravan.nextLandmark == "flag1"){
-					caravan.goToGreenRiver();
+				loadInteract(getWeather());
+				doStuff(i);
+			}
+
+			function doStuff(i){
+				setTimeout(function(){
+					caravan.getEvent();
+					console.log("Rolling along", caravan.distance);
+					console.log("Living check", caravan.checkForDead());
+					console.log("Next landmark:", caravan.nextLandmark);
+					loadInteract(getWeather());
+					if(caravan.nextLandmark == "flag1"){
+						caravan.goToGreenRiver();
+					}
+					else if(caravan.nextLandmark == "flag2"){
+						caravan.goToTheDalles();
+					}
+				}, 1000 * (i + 1));
+			}
+
+			function getPace(){
+				if(caravan.pace == 1){
+					return "steady";
+				} else if(caravan.pace == 1.5){
+					return "strenuous";
+				} else {
+					return "grueling";
 				}
-				else if(caravan.nextLandmark == "flag2"){
-					caravan.goToTheDalles();
+			}
+
+			function getRations(){
+				if(caravan.rations == 3){
+					return "filling";
+				} else if(caravan.rations == 2){
+					return "meager";
+				} else{
+					return "bare bones";
+				}
+			}
+
+			function buyThings(item, number){
+				var fort_cost = 1;
+				if(caravan.fort){
+					fort_cost += (caravan.fort - 1) / 4; 
+				}
+
+				if(item * number * fort_cost > caravan.money){
+					return false;
+				}
+
+				if(item == 1){
+					caravan.oxen += number;
+				} else if(item == 2) {
+					caravan.clothing += number;
+				} else if(item == 2) {
+					caravan.ammo += number * 20;
+				} else if(item == 2) {
+					caravan.wheel += number;
+				} else if(item == 2) {
+					caravan.tongue += number;
+				} else if(item == 2) {
+					caravan.axle += number;
+				} else if(item == 2) {
+					caravan.food += number;
+				}
+
+				caravan.money -= item * number * fort_cost;
+				return true;
+			}
+
+			function getDate(){
+				if(caravan.day > 273) {
+					//game over
+				}
+				if(caravan.day <= 30){
+					return "April " + caravan.day + ", 1848"
+				} else if(caravan.day <= 61){
+					return "May " + (caravan.day - 30) + ", 1848"
+				} else if(caravan.day <= 91){
+					return "June " + (caravan.day - 61) + ", 1848"
+				} else if(caravan.day <= 122){
+					return "July " + (caravan.day - 91) + ", 1848"
+				} else if(caravan.day <= 152){
+					return "August " + (caravan.day - 122) + ", 1848"
+				} else if(caravan.day <= 183){
+					return "September " + (caravan.day - 152) + ", 1848"
+				} else if(caravan.day <= 213){
+					return "October " + (caravan.day - 183) + ", 1848"
+				} else if(caravan.day <= 244){
+					return "November " + (caravan.day - 213) + ", 1848"
+				} else if(caravan.day <= 274){
+					return "December " + (caravan.day - 244) + ", 1848"
 				}
 			}
 
@@ -43,27 +128,63 @@
 				}
 
 				if(value < 2) {
-					this.weather = "cold";
+					return weather = "cold";
 				}
 				else if(value < 32){
-					this.weather = "cool";
+					return weather = "cool";
 				}
 				else if(value < 46){
-					this.weather = "rainy";
+					return weather = "rainy";
 				}
 				else if(value < 49){
-					this.weather = "very rainy";
+					return weather = "very rainy";
 				}
 				else if(value < 71){
-					this.weather = "warm";
+					return weather = "warm";
 				}
 				else if(value < 97){
-					this.weather = "hot";
+					return weather = "hot";
 				}
 				else{
-					this.weather = "very hot";
+					return weather = "very hot";
 				}
+			}
+
+			function loadInteract(weather){
+				$('.frame-interact').find('.header').html(
+					"<br>" + getDate() + "<br>"
+				);
+
+				$('.frame-interact').find('.status').html(
+					"&nbsp;&nbsp;Weather: " + weather + "<br>&nbsp;&nbsp;Health: " + caravan.partyHealth() +"<br>&nbsp;&nbsp;Pace: " + getPace() + "<br>&nbsp;&nbsp;Rations: " + getRations() + "<br>"
+				);
 			}
 		});
 	</script>
+	<div class="frame"></div>
+	<div class="frame-interact">
+		<p class="header">
+		Independence<br>
+		Date<br>
+		</p>
+		<p class="status">
+			Weather: getweather<br>
+			Health: gethealth<br>
+			Pace: getpace<br>
+			Rations: getrations<br>
+		</p>
+		<p class="options">
+			&nbsp;&nbsp;You may: <br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. Continue on trail<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. Check supplies<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3. Look at map<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4. Change pace<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5. Change food rations<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6. Stop to rest<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7. Attempt to trade<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8. Go fishing<br><br><br>
+
+			&nbsp;&nbsp;What is your choice?
+		</p>
+	</div>
 </html>
