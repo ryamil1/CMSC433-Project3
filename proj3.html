@@ -2,7 +2,6 @@
 <html>
 <head>
 	<meta charset=utf-8 />
-	<link rel="stylesheet" href="proj3_anim_wagon.css">
 	<script src="./pro3_gui.js"></script>
 	<script src="./person.js"></script>	
 	<script src="./caravan.js"></script>
@@ -71,8 +70,8 @@
 		});
 	</script>
 	<div>
-        <image id="bkg">
-        <image id="image" onmouseover="animateScript()" onmouseout="stopAnimate()">
+		<img id="wagon" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
+		<img id="location" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
         <canvas id="myCanvas" width="600" height="600" style="border:1px solid black;">
     </div>
     <script>
@@ -80,6 +79,16 @@
         var ctx = c.getContext("2d");
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, c.width, c.height);
+	</script>
+	<script>
+		window.onload = function() {
+			var canvas = document.getElementById("myCanvas");
+			var ctx = canvas.getContext("2d");
+			var img = document.getElementById("wagon");
+			var img2 = document.getElementById("location");
+			animateScript(1);											// animate the wagon
+			ctx.drawImage(img2, 5, 275, 279, 11, 0, 25, 600, 25);		// draw the background
+		};
 	</script>
 </body>
 </html>

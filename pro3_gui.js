@@ -4,7 +4,10 @@ function animateScript($speed) {
 	const  interval = 300/$speed;
 	
 	tID = setInterval ( () => {
-		document.getElementById("image").style.backgroundPosition = `0px -${position}px`; 
+		console.log(position);
+		var ctx = (document.getElementById("myCanvas")).getContext("2d"); 
+		var img = document.getElementById("wagon");
+		ctx.drawImage(img, 0, position, 80, 30, 450, 70, 80, 30);
 
 		// We increment the position by 30 each time
 		if (position < 30) { 
@@ -26,4 +29,4 @@ function stopAnimate() {
 // 1 - Slow
 // 2 - Normal
 // 3 - Grueling
-animateScript(2);
+//animateScript(2);
