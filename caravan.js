@@ -55,9 +55,11 @@ class Caravan {
 	setDistance(other = 0){
 		if(this.location){
 			this.distance += 12 * this.pace + other;
+			this.fort = 0;
 		}
 		else{
 			this.distance += 20 * this.pace + other;
+			this.fort = 0;
 		}
 		
 		if(this.nextLandmark == "Kansas River Crossing" && this.distance >= this.target_distance) {
@@ -74,6 +76,7 @@ class Caravan {
 			this.nextLandmark = "Chimney Rock";
 			this.distance = this.target_distance;
 			this.target_distance += 250;
+			this.fort = 2;
 		}
 		else if(this.nextLandmark == "Chimney Rock" && this.distance >= this.target_distance) {
 			this.nextLandmark = "Fort Laramie";
@@ -85,6 +88,7 @@ class Caravan {
 			this.distance = this.target_distance;
 			this.target_distance += 190;
 			this.location = 1;
+			this.fort = 3;
 		}
 		else if(this.nextLandmark == "Independence Rock" && this.distance >= this.target_distance) {
 			this.nextLandmark = "South Pass";
@@ -104,6 +108,7 @@ class Caravan {
 			this.nextLandmark = "Soda Springs";
 			this.distance = this.target_distance;
 			this.target_distance += 162;
+			this.fort = 4;
 		}
 		else if(this.nextLandmark == "Soda Springs" && this.distance >= this.target_distance) {
 			this.nextLandmark = "Fort Hall";
@@ -114,6 +119,7 @@ class Caravan {
 			this.nextLandmark = "Snake River Crossing";
 			this.distance = this.target_distance;
 			this.target_distance += 182;
+			this.fort = 5;
 		}
 		else if(this.nextLandmark == "Snake River Crossing" && this.distance >= this.target_distance) {
 			this.nextLandmark = "Fort Boise";
@@ -124,6 +130,7 @@ class Caravan {
 			this.nextLandmark = "Blue Mountains";
 			this.distance = this.target_distance;
 			this.target_distance += 160;
+			this.fort = 6;
 		}
 		else if(this.nextLandmark == "Blue Mountains" && this.distance >= this.target_distance) {
 			this.nextLandmark = "flag2";
@@ -133,6 +140,7 @@ class Caravan {
 			this.nextLandmark = "The Dalles";
 			this.distance = this.target_distance;
 			this.target_distance += 120;
+			this.fort = 7;
 		}
 		else if(this.nextLandmark == "The Dalles" && this.distance >= this.target_distance) {
 			this.nextLandmark = "flag3";
