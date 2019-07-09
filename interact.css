@@ -4,8 +4,8 @@
 
 .frame{
 	position: absolute;
-	left:-9999445px;
-	top:445px;
+	left:645px;
+	top:45px;
 	background-color:black;
 	height: 430px;
 	width: 510px;
@@ -14,8 +14,8 @@
 
 .frame-interact{
 	position: absolute;
-	left: -999450px;
-	top: 450px;
+	left: 650px;
+	top: 50px;
 	height: 420px;
 	width: 500px;
 	color: white;
