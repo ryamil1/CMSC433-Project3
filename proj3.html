@@ -8,6 +8,12 @@
 </head>
 	<script>
 		$('document').ready(function() {
+			const OXEN = 20;
+			const CLOTHING = 10;
+			const PART = 10;
+			const AMMO = .40;
+			const FOOD = .2;
+
 			var weather = "clear"
 			var caravan = new Caravan(1);
 			caravan.makeMember("Potato");
@@ -65,6 +71,7 @@
 
 			function buyThings(item, number){
 				var fort_cost = 1;
+				var item_cost = 0;
 				if(caravan.fort){
 					fort_cost += (caravan.fort - 1) / 4; 
 				}
@@ -75,21 +82,28 @@
 
 				if(item == 1){
 					caravan.oxen += number;
+					item_cost = OXEN;
 				} else if(item == 2) {
 					caravan.clothing += number;
+					item_cost = CLOTHING;
 				} else if(item == 2) {
 					caravan.ammo += number * 20;
+					item_cost = AMMO;
 				} else if(item == 2) {
 					caravan.wheel += number;
+					item_cost = PART;
 				} else if(item == 2) {
 					caravan.tongue += number;
+					item_cost = PART;
 				} else if(item == 2) {
 					caravan.axle += number;
+					item_cost = PART;
 				} else if(item == 2) {
 					caravan.food += number;
+					item_cost = FOOD;
 				}
 
-				caravan.money -= item * number * fort_cost;
+				caravan.money -= item_cost * number * fort_cost;
 				return true;
 			}
 
