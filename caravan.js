@@ -3,13 +3,13 @@ class Caravan {
 		this.day = day;
 		this.distance = 0;
 		this.target_distance = 102;
+		this.weather = "clear"; //getWeather; 
 		this.pace = 1;  //expecting ui to reach in to change this when appropriate
 		this.rations = 3; //expecting ui to reach in to change this when appropriate
 		this.starving = false; //managed in setFood
 		this.location = 0; //tracks if caravan has hit for laramie for distance calculations
 		this.nextLandmark = "Kansas River Crossing"; //needs the ui to reach in and change this based on player decisions
 		this.eventLocked = 0; //tracks days which need to tick for multi-day events
-		this.fort = 1;
 
 		this.members = [];
 		this.oxen = 0;
@@ -34,7 +34,6 @@ class Caravan {
 			element.setHealth(pass_rat, pass_pace);
 			console.log("Member check:", element.name, element.health)
 		});
-		this.day++;
 	}
 
 	setFood(){
@@ -252,22 +251,5 @@ class Caravan {
 
 	makeMember(name){
 		this.members.push(new Person(name))
-	}
-
-	partyHealth(){
-		var health = 0;
-		for(var i = 0; i < this.members.length; i++){
-			health += this.members[i].health;
-		}
-
-		if(health > this.members.length * 75){
-			return "good"
-		} else if(health > this.members.length * 50){
-			return "fair"
-		} else if(health > this.members.length * 25){
-			return "poor"
-		} else{
-			return "very poor"
-		}
 	}
 }

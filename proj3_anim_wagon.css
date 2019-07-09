@@ -1,0 +1,17 @@
+#image {
+  position: absolute;
+  top: 75px;
+  left: 500px;
+  height: 30px;
+  width: 80px;
+  background: url('http://localhost/proj3/oregon_trail_sprites/ot_misc.gif') 0px 0px;
+}
+
+#bkg {
+  position: absolute;
+  top: -225px;
+  clip: rect(275px,284px,290px,5px);
+  height: 392px;
+  width: 311px;
+  background: url('http://localhost/proj3/oregon_trail_sprites/ot_misc.gif');
+}
