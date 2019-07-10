@@ -9,6 +9,11 @@
 	<link rel="stylesheet" href="interact.css">
 </head>
 <body>
+	<div>
+		<img id="wagon" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
+		<img id="location" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
+		<canvas id="myCanvas" width="600" height="190" style="border:0px solid black;">
+	</div>
 	<script>
 		$('document').ready(function() {
 			const OXEN = 20;
@@ -17,7 +22,7 @@
 			const AMMO = .40;
 			const FOOD = .2;
 
-			var weather = "clear"
+			var weather = "clear";
 			var caravan = new Caravan(1);
 			caravan.makeMember("Potato");
 			console.log(caravan.members);
@@ -55,7 +60,7 @@
 			function getPace(){
 				if(caravan.pace == 1){
 					return "steady";
-				} else if(caravan.pace == 1.5){
+				} else if(caravan.pace == 2){
 					return "strenuous";
 				} else {
 					return "grueling";
@@ -173,45 +178,48 @@
 				);
 
 				$('.frame-interact').find('.status').html(
-					"&nbsp;&nbsp;Weather: " + weather + "<br>&nbsp;&nbsp;Health: " + caravan.partyHealth() +"<br>&nbsp;&nbsp;Pace: " + getPace() + "<br>&nbsp;&nbsp;Rations: " + getRations() + "<br>"
+					"&nbsp;&nbsp;Weather: " + weather + "<br>&nbsp;&nbsp;Health: " + caravan.partyHealth() + "<br>&nbsp;&nbsp;Pace: " + getPace() + "<br>&nbsp;&nbsp;Rations: " + getRations() + "<br>"
 				);
 			}
 		});
 	</script>
-	<div>
-		<img id="wagon" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
-		<img id="location" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
-        <canvas id="myCanvas" width="600" height="600" style="border:1px solid black;">
-    </div>
-    <script>
-        var c = document.getElementById("myCanvas");
-        var ctx = c.getContext("2d");
-        ctx.fillStyle = "black";
-        ctx.fillRect(0, 0, c.width, c.height);
-	</script>
 	<script>
-		window.onload = function() {
-			var canvas = document.getElementById("myCanvas");
-			var ctx = canvas.getContext("2d");
-			var img = document.getElementById("wagon");
-			var img2 = document.getElementById("location");
-			animateScript(1);											// animate the wagon
-			ctx.drawImage(img2, 5, 275, 279, 11, 0, 25, 600, 25);		// draw the background
-		};
+			$('document').ready(function() {
+				var c = document.getElementById("myCanvas");
+				var ctx = c.getContext("2d");
+				var ctx2 = c.getContext("2d");
+				ctx.fillStyle = "black";
+				ctx.fillRect(0, 0, c.width, c.height);
+				ctx2.fillStyle = "#25d931";
+				ctx2.fillRect(0, 115, c.width, 75);
+		
+				window.onload = function() {
+					var canvas = document.getElementById("myCanvas");
+					var ctx = canvas.getContext("2d");
+					var img = document.getElementById("wagon");
+					var img2 = document.getElementById("location");
+					animateScript(2);									// animate the wagon
+					ctx.drawImage(img2, 5, 275, 279, 11, 0, 25, 600, 25);			// draw the background
+					
+					// Example of a moving landmark, This will ideally be called by some other function when
+					// approaching a landmark.
+					//animateLandmark(2, "River"); 
+				};
+			});
 	</script>
 	<div class="frame"></div>
 	<div class="frame-interact">
-		<p class="header">
+		<p class="header" style="font-family:georgia">
 		Independence<br>
 		Date<br>
 		</p>
-		<p class="status">
+		<p class="status" style="font-family:georgia">
 			Weather: getweather<br>
 			Health: gethealth<br>
 			Pace: getpace<br>
 			Rations: getrations<br>
 		</p>
-		<p class="options">
+		<p class="options" style="font-family:georgia">
 			&nbsp;&nbsp;You may: <br><br>
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. Continue on trail<br>
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. Check supplies<br>
