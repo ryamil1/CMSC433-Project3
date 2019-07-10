@@ -4,20 +4,20 @@
 
 .frame{
 	position: absolute;
-	left:645px;
-	top:45px;
+	left:16px;
+	top:195px;
 	background-color:black;
 	height: 430px;
-	width: 510px;
+	width: 600;
 	
 }
 
 .frame-interact{
 	position: absolute;
-	left: 650px;
-	top: 50px;
+	left: 16px;
+	top: 195px;
 	height: 420px;
-	width: 500px;
+	width: 600px;
 	color: white;
 	background-color: black;
 }

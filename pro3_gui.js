@@ -5,7 +5,17 @@ var tID2;
 // 1 - Steady
 // 1.5 - Strenuous
 // 2 - Grueling
-function animateScript(speed) {
+function animateScript(pace) {
+	if (pace == "steady") {
+		speed = 1;
+	}
+	else if (pace == "strenuous") {
+		speed = 1.5;
+	}
+	else if (pace = "grueling") {
+		speed = 2;
+	}
+
 	var    position = 0; //start position for the image slicer
 	const  interval = 300/speed;
 	
@@ -30,7 +40,17 @@ function stopAnimate(tID) {
 	clearInterval(tID);
 } //end of stopAnimate()
 
-function animateLandmark(speed, landmark) {
+function animateLandmark(pace, landmark) {
+	if (pace == "steady") {
+		speed = 1;
+	}
+	else if (pace == "strenuous") {
+		speed = 1.5;
+	}
+	else if (pace = "grueling") {
+		speed = 2;
+	}
+
 	speed = speed * 2;
 	var    position = 0; //start position for the image slicer
 	const  interval = 300/speed;
@@ -39,7 +59,7 @@ function animateLandmark(speed, landmark) {
 		var c = document.getElementById("myCanvas");
 		var ctx = c.getContext("2d"); 
 		var img = document.getElementById("location");
-		if (landmark == "River") {
+		if (landmark == "Kansas River Crossing") {
 			ctx.drawImage(img, 205, 58, 55, 23, position, 71, 90, 45);
 			ctx.fillStyle = "black";
 			ctx.fillRect(position-1, 107, speed+2, 8);

@@ -10,7 +10,6 @@ class Caravan {
 		this.nextLandmark = "Kansas River Crossing"; //needs the ui to reach in and change this based on player decisions
 		this.eventLocked = 0; //tracks days which need to tick for multi-day events
 		this.fort = 1;
-
 		this.members = [];
 		this.oxen = 0;
 		this.food = 0;
@@ -25,7 +24,7 @@ class Caravan {
 	getEvent(){
 		//random to get event
 		//huge case statement
-			//each event controls the update of health and distance
+		//each event controls the update of health and distance
 		this.setDistance();
 		this.setFood();
 		var pass_rat = this.mapRationToHealth();
@@ -259,7 +258,7 @@ class Caravan {
 	}
 
 	makeMember(name){
-		this.members.push(new Person(name))
+		this.members.push(new Person(name));
 	}
 
 	partyHealth(){

@@ -2,18 +2,13 @@
 <html>
 <head>
 	<meta charset=utf-8 />
-	<script src="./pro3_gui.js"></script>
-	<script src="./person.js"></script>	
-	<script src="./caravan.js"></script>
+	<script src="pro3_gui.js"></script>
+	<script src="person.js"></script>	
+	<script src="caravan.js"></script>
 	<script src=" https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<link rel="stylesheet" href="interact.css">
 </head>
 <body>
-	<div>
-		<img id="wagon" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
-		<img id="location" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
-		<canvas id="myCanvas" width="600" height="190" style="border:0px solid black;">
-	</div>
 	<script>
 		$('document').ready(function() {
 			const OXEN = 20;
@@ -178,13 +173,10 @@
 				);
 
 				$('.frame-interact').find('.status').html(
-					"&nbsp;&nbsp;Weather: " + weather + "<br>&nbsp;&nbsp;Health: " + caravan.partyHealth() + "<br>&nbsp;&nbsp;Pace: " + getPace() + "<br>&nbsp;&nbsp;Rations: " + getRations() + "<br>"
+					"&nbsp;&nbsp;Weather: " + weather + "<br>&nbsp;&nbsp;Health: caravan.partyHealth()<br>&nbsp;&nbsp;Pace: " + getPace() + "<br>&nbsp;&nbsp;Rations: " + getRations() + "<br>"
 				);
 			}
-		});
-	</script>
-	<script>
-			$('document').ready(function() {
+
 				var c = document.getElementById("myCanvas");
 				var ctx = c.getContext("2d");
 				var ctx2 = c.getContext("2d");
@@ -193,21 +185,24 @@
 				ctx2.fillStyle = "#25d931";
 				ctx2.fillRect(0, 115, c.width, 75);
 		
-				window.onload = function() {
-					var canvas = document.getElementById("myCanvas");
-					var ctx = canvas.getContext("2d");
-					var img = document.getElementById("wagon");
-					var img2 = document.getElementById("location");
-					animateScript(2);									// animate the wagon
-					ctx.drawImage(img2, 5, 275, 279, 11, 0, 25, 600, 25);			// draw the background
-					
-					// Example of a moving landmark, This will ideally be called by some other function when
-					// approaching a landmark.
-					//animateLandmark(2, "River"); 
-				};
-			});
+				var canvas = document.getElementById("myCanvas");
+				var ctx = canvas.getContext("2d");
+				var img = document.getElementById("wagon");
+				var img2 = document.getElementById("location");
+				animateScript(getPace());										// animate the wagon
+				ctx.drawImage(img2, 5, 275, 279, 11, 0, 25, 600, 25);			// draw the background
+				
+				// Example of a moving landmark, This will ideally be called by some other function when
+				// approaching a landmark.
+				//animateLandmark(getPace(), caravan.nextLandmark); 
+		});
 	</script>
 	<div class="frame"></div>
+	<div>
+		<img id="wagon" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
+		<img id="location" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
+		<canvas id="myCanvas" width="600" height="190" style="border:0px solid black;">
+	</div>
 	<div class="frame-interact">
 		<p class="header" style="font-family:georgia">
 		Independence<br>
