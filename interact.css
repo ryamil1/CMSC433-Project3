@@ -4,20 +4,19 @@
 
 .frame{
 	position: absolute;
-	left:16px;
-	top:195px;
+	left:45px;
+	top:45px;
 	background-color:black;
 	height: 430px;
-	width: 600;
-	
+	width: 625px;
 }
 
 .frame-interact{
 	position: absolute;
-	left: 16px;
-	top: 195px;
+	left: 850px;
+	top: 50px;
 	height: 420px;
-	width: 600px;
+	width: 615px;
 	color: white;
 	background-color: black;
 }
@@ -27,5 +26,11 @@
 	padding-bottom: 5px;
 	color: black;
 	background-color: white;
+}
+
+.frame-travel{
+	position: absolute;
+	left: 50px;
+	top: 50px;
 }
 
