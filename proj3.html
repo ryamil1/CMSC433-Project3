@@ -18,10 +18,11 @@
 			const FOOD = .2;
 
 			var weather = "clear";
-			var caravan = new Caravan(1);
+			var caravan = new Caravan(1, "Banker");
 			caravan.makeMember("Potato");
 			console.log(caravan.members);
 			console.log(caravan.day);
+			//console.log(caravan.job);
 			caravan.goFishing();
 			console.log(caravan.food);
 			caravan.rest(1);
@@ -30,14 +31,29 @@
 			console.log(caravan.food);
 			console.log(caravan.members[0].isAlive());
 			console.log("Living check", caravan.checkForDead());
-			caravan.pace = 2;
+			caravan.pace = 1;
+			animateWagon(getPace());
 			for(var i = 0; i < 100; i++){
 				loadInteract(getWeather());
-				doStuff(i);
+				res = doStuff(i);
+				if (res == -1) {
+					break;
+				}
 			}
 
 			function doStuff(i){
 				setTimeout(function(){
+					if (caravan.checkForDead() == -1) {
+						console.log("Here Lies Potato");
+						return -1;
+					}
+
+					dist = caravan.target_distance - caravan.distance;
+					console.log("Distance to Next Landmark: ", dist);
+					if (dist <= 60) {
+						animateLandmark(dist, caravan.pace, caravan.nextLandmark);
+					}
+
 					caravan.getEvent();
 					console.log("Rolling along", caravan.distance);
 					console.log("Living check", caravan.checkForDead());
@@ -55,7 +71,7 @@
 			function getPace(){
 				if(caravan.pace == 1){
 					return "steady";
-				} else if(caravan.pace == 2){
+				} else if(caravan.pace == 1.5){
 					return "strenuous";
 				} else {
 					return "grueling";
@@ -173,28 +189,12 @@
 				);
 
 				$('.frame-interact').find('.status').html(
-					"&nbsp;&nbsp;Weather: " + weather + "<br>&nbsp;&nbsp;Health: caravan.partyHealth()<br>&nbsp;&nbsp;Pace: " + getPace() + "<br>&nbsp;&nbsp;Rations: " + getRations() + "<br>"
+					"&nbsp;&nbsp;Weather: " + weather + "<br>&nbsp;&nbsp;Health: " + caravan.partyHealth() + "<br>&nbsp;&nbsp;Pace: " + getPace() + "<br>&nbsp;&nbsp;Rations: " + getRations() + "<br>"
 				);
 			}
 
-				var c = document.getElementById("myCanvas");
-				var ctx = c.getContext("2d");
-				var ctx2 = c.getContext("2d");
-				ctx.fillStyle = "black";
-				ctx.fillRect(0, 0, c.width, c.height);
-				ctx2.fillStyle = "#25d931";
-				ctx2.fillRect(0, 115, c.width, 75);
-		
-				var canvas = document.getElementById("myCanvas");
-				var ctx = canvas.getContext("2d");
-				var img = document.getElementById("wagon");
-				var img2 = document.getElementById("location");
-				animateScript(getPace());										// animate the wagon
-				ctx.drawImage(img2, 5, 275, 279, 11, 0, 25, 600, 25);			// draw the background
-				
-				// Example of a moving landmark, This will ideally be called by some other function when
-				// approaching a landmark.
-				//animateLandmark(getPace(), caravan.nextLandmark); 
+			// Draw the animated canvas
+			drawCanvas();
 		});
 	</script>
 	<div class="frame"></div>

@@ -1,12 +1,12 @@
 class Caravan {
-	constructor(day) {
+	constructor(day, career) {
 		this.day = day;
 		this.distance = 0;
 		this.target_distance = 102;
 		this.pace = 1;  //expecting ui to reach in to change this when appropriate
 		this.rations = 3; //expecting ui to reach in to change this when appropriate
 		this.starving = false; //managed in setFood
-		this.location = 0; //tracks if caravan has hit for laramie for distance calculations
+		this.location = 0; //tracks if caravan has hit fort laramie for distance calculations
 		this.nextLandmark = "Kansas River Crossing"; //needs the ui to reach in and change this based on player decisions
 		this.eventLocked = 0; //tracks days which need to tick for multi-day events
 		this.fort = 1;
@@ -19,6 +19,7 @@ class Caravan {
 		this.axle = 0;
 		this.clothes = 0;
 		this.money = 0;
+		this.job = career;
 	}
 
 	getEvent(){
@@ -179,6 +180,7 @@ class Caravan {
 
 	//Rests for one day.
 	rest(day){
+		stopAnimate(tID);
 		//First check for food, could be starving.
 		this.setFood();
 		//Get a random rest value and the current food consumption rate
@@ -192,6 +194,7 @@ class Caravan {
 			element.setHealth(ration_val, 0, rest_val);
 		});
 		this.time += 1;
+		animateWagon(this.pace);
 	}
 
 	//Generate a random amount of food from 15-100, return the value gained.
