@@ -22,6 +22,14 @@
 			const AMMO = .40;
 			const FOOD = .2;
 
+			var c = document.getElementById("myCanvas");
+			var ctx = c.getContext("2d");
+			var ctx2 = c.getContext("2d");
+			ctx.fillStyle = "black";
+			ctx.fillRect(0, 0, c.width, c.height);
+			ctx2.fillStyle = "#25d931";
+			ctx2.fillRect(0, 115, c.width, 75);
+
 			var weather = "clear";
 			var caravan = new Caravan(1);
 			caravan.makeMember("Potato");
@@ -54,7 +62,13 @@
 					else if(caravan.nextLandmark == "flag2"){
 						caravan.goToTheDalles();
 					}
-				}, 1000 * (i + 1));
+					var canvas = document.getElementById("myCanvas");
+					var ctx = canvas.getContext("2d");
+					var img = document.getElementById("wagon");
+					var img2 = document.getElementById("location");
+					animateScript(2, 1000);									// animate the wagon
+					ctx.drawImage(img2, 5, 275, 279, 11, 0, 25, 600, 25);
+				}, 2000 * (i + 1));
 			}
 
 			function getPace(){
@@ -184,15 +198,6 @@
 		});
 	</script>
 	<script>
-			$('document').ready(function() {
-				var c = document.getElementById("myCanvas");
-				var ctx = c.getContext("2d");
-				var ctx2 = c.getContext("2d");
-				ctx.fillStyle = "black";
-				ctx.fillRect(0, 0, c.width, c.height);
-				ctx2.fillStyle = "#25d931";
-				ctx2.fillRect(0, 115, c.width, 75);
-		
 				window.onload = function() {
 					var canvas = document.getElementById("myCanvas");
 					var ctx = canvas.getContext("2d");

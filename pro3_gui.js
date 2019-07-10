@@ -5,10 +5,10 @@ var tID2;
 // 1 - Steady
 // 1.5 - Strenuous
 // 2 - Grueling
-function animateScript(speed) {
+function animateScript(speed, time) {
 	var    position = 0; //start position for the image slicer
 	const  interval = 300/speed;
-	
+	var times_run = 0;
 	tID = setInterval ( () => {
 		var ctx = (document.getElementById("myCanvas")).getContext("2d"); 
 		var img = document.getElementById("wagon");
@@ -20,6 +20,10 @@ function animateScript(speed) {
 		}
 		else { 
 			position = 0;
+		}
+		times_run += 1;
+		if(times_run > 1000/interval){
+			clearInterval(tID);
 		}
 		//reset the position to 0px, once position exceeds 30px
 	} ,interval ); //end of setInterval
