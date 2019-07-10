@@ -17,6 +17,9 @@
 			const AMMO = .40;
 			const FOOD = .2;
 
+			// Draw the animated canvas
+			drawCanvas();
+
 			var weather = "clear";
 			var caravan = new Caravan(1, "Banker");
 			caravan.makeMember("Potato");
@@ -32,7 +35,6 @@
 			console.log(caravan.members[0].isAlive());
 			console.log("Living check", caravan.checkForDead());
 			caravan.pace = 1;
-			animateWagon(getPace());
 			for(var i = 0; i < 100; i++){
 				loadInteract(getWeather());
 				res = doStuff(i);
@@ -65,7 +67,8 @@
 					else if(caravan.nextLandmark == "flag2"){
 						caravan.goToTheDalles();
 					}
-				}, 1000 * (i + 1));
+					animateWagon(caravan.pace);
+				}, 2000 * (i + 1));
 			}
 
 			function getPace(){
@@ -192,9 +195,6 @@
 					"&nbsp;&nbsp;Weather: " + weather + "<br>&nbsp;&nbsp;Health: " + caravan.partyHealth() + "<br>&nbsp;&nbsp;Pace: " + getPace() + "<br>&nbsp;&nbsp;Rations: " + getRations() + "<br>"
 				);
 			}
-
-			// Draw the animated canvas
-			drawCanvas();
 		});
 	</script>
 	<div class="frame"></div>

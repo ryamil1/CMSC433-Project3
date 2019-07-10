@@ -22,19 +22,10 @@ function drawCanvas() {
 // 1.5 - Strenuous
 // 2 - Grueling
 function animateWagon(pace) {
-	if (pace == "steady") {
-		speed = 1;
-	}
-	else if (pace == "strenuous") {
-		speed = 1.5;
-	}
-	else if (pace = "grueling") {
-		speed = 2;
-	}
-
 	var    position = 0; //start position for the image slicer
-	const  interval = 300/speed;
-	
+	const  interval = 300/pace;
+
+	var times_run = 0;
 	tID = setInterval ( () => {
 		var ctx = (document.getElementById("myCanvas")).getContext("2d"); 
 		var img = document.getElementById("wagon");
@@ -48,6 +39,11 @@ function animateWagon(pace) {
 			position = 0;
 		}
 		//reset the position to 0px, once position exceeds 30px
+		
+		times_run += 1; 
+		if(times_run > 1000/interval){
+			clearInterval(tID);
+		}
 	} ,interval ); //end of setInterval
 
 } //end of animateWagon()
