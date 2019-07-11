@@ -4,6 +4,32 @@
 
 .frame{
 	position: absolute;
+	left: 50px;
+	top: 50px;
+	height: 420px;
+	width: 615px;
+}
+
+.frame-intro{
+	color: white;
+}
+
+.title{
+	text-align: center;
+	width: 615px;
+	font-size: 60px;
+}
+
+#options{
+	font-size: 22px;
+}
+
+#response{
+	font-size: 22px;
+}
+
+.border{
+	position: absolute;
 	left:45px;
 	top:45px;
 	background-color:black;
@@ -12,13 +38,14 @@
 }
 
 .frame-interact{
-	position: absolute;
-	left: 850px;
-	top: 50px;
-	height: 420px;
-	width: 615px;
 	color: white;
 	background-color: black;
+}
+
+.response{
+	position: absolute;
+	left: 300px;
+	top: 372px;
 }
 
 .status{
