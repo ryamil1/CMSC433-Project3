@@ -17,20 +17,16 @@
 			const PART = 10;
 			const AMMO = .40;
 			const FOOD = .2;
-
-			// Draw the animated canvas
-			drawCanvas();
-
 			var travID;  //This cannot be cleaned up.  Variable scoping is critical to event handling
 			var weather = "clear";  //Default weather
 			var caravan = new Caravan(1, "Banker");  //Similarly, this needs to be kept here for scoping.
-
 			//Everything in this area is for testing purposes and should be cleaned, eventually.
+			// Draw the animated canvas
+			drawCanvas(caravan.location);
 			loadData(weather);  
 			caravan.makeMember("Potato");
 			console.log(caravan.members);
 			console.log(caravan.day);
-			//console.log(caravan.job);
 			caravan.goFishing();
 			console.log(caravan.food);
 			caravan.rest(1);
@@ -40,7 +36,6 @@
 			console.log(caravan.members[0].isAlive());
 			console.log("Living check", caravan.checkForDead());
 			caravan.pace = 1;
-
 			//Function to make oxen walk and stuff happen while traveling.
 			function travel(){
 				//Repeat an arbitrary number of times...
@@ -49,8 +44,9 @@
 					if (caravan.checkForDead() == -1) {
 						console.log("Here Lies Potato");
 						clearInterval(travID);
+						drawGrave();
+						return -1;
 					}
-
 					caravan.getEvent();  //critical
 					console.log("Rolling along", caravan.distance);
 					console.log("Living check", caravan.checkForDead());
@@ -63,7 +59,6 @@
 					else if(caravan.nextLandmark == "flag2"){ //also testing
 						caravan.goToTheDalles();
 					}
-
 					//this block is critical
 					dist = caravan.target_distance - caravan.distance;
 					console.log("Distance to Next Landmark: ", dist);
@@ -71,10 +66,8 @@
 					if (dist <= 60) {
 						animateLandmark(dist, caravan.pace, caravan.nextLandmark);
 					}
-
 				}, 2000); //every 2 seconds.
 			}
-
 			//Convert pace into words.
 			function getPace(){
 				if(caravan.pace == 1){
@@ -85,7 +78,6 @@
 					return "grueling";
 				}
 			}
-
 			//Convert rations into words.
 			function getRations(){
 				if(caravan.rations == 3){
@@ -96,7 +88,6 @@
 					return "bare bones";
 				}
 			}
-
 			//Function to handle buying things at forts.  Pass it the item number and quantity and
 			//it will do the rest
 			function buyThings(item, number){
@@ -105,11 +96,9 @@
 				if(caravan.fort){
 					fort_cost += (caravan.fort - 1) / 4; 
 				}
-
 				if(item * number * fort_cost > caravan.money){
 					return false;
 				}
-
 				if(item == 1){
 					caravan.oxen += number;
 					item_cost = OXEN;
@@ -132,11 +121,9 @@
 					caravan.food += number;
 					item_cost = FOOD;
 				}
-
 				caravan.money -= item_cost * number * fort_cost;
 				return true;
 			}
-
 			//Translate the date from number to a date.
 			function getDate(){
 				if(caravan.day > 273) {
@@ -162,7 +149,6 @@
 					return "December " + (caravan.day - 244) + ", 1848"
 				}
 			}
-
 			//Figure out what today's weather is.
 			function getWeather(){
 				value = Math.floor(Math.random() * 100);
@@ -172,7 +158,6 @@
 				else if(this.day > 120 && this.day < 180){
 					value += 10;
 				}
-
 				if(value < 2) {
 					return weather = "cold";
 				}
@@ -195,25 +180,22 @@
 					return weather = "very hot";
 				}
 			}
-
 			//Load data into the interact page.
 			function loadInteract(weather){
 				$('.frame-interact').find('.header').html(
 					"<br>" + getDate() + "<br>"
 				);
-
 				$('.frame-interact').find('.status').html(
 					"&nbsp;&nbsp;Weather: " + weather + "<br>&nbsp;&nbsp;Health: " + caravan.partyHealth() + "<br>&nbsp;&nbsp;Pace: " + getPace() + "<br>&nbsp;&nbsp;Rations: " + getRations() + "<br>"
 				);
 			}
-
 			//Load data into the ui of the travel page.
 			function loadData(weather){
+				drawEnvironment(weather, caravan.location);
 				$('.frame-travel').find('.data').html(
 					"" + getDate() + "<br>" + weather + "<br>" + caravan.partyHealth() + "<br>" + caravan.food + "<br>" + (caravan.target_distance - caravan.distance) + "<br>" + caravan.distance
 				);
 			}
-
 			//This function is going to get massive, I think.  
 			//Handles key press events.
 			$(document).keydown(function(){
@@ -270,9 +252,9 @@
 		<img id="wagon" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
 		<img id="location" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
 		<canvas id="myCanvas" width="600" height="190" style="border:0px solid black;"></canvas>
-		<p class="size_up" style="font-family:georgia">
+		<p id="info" class="size_up" style="font-family:georgia">
 				Press enter to size up the situation.
-		<div class="data-frame"><p class="labels" style="font-family:georgia">
+		<div id="data" class="data-frame"><p class="labels" style="font-family:georgia">
 				Date :<br>
 				Weather :<br>
 				Health :<br>

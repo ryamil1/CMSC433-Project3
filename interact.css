@@ -1,3 +1,7 @@
+body {
+	background-color: #FFF;
+}
+
 .header{
 	text-align: center;
 }
@@ -92,4 +96,3 @@
 	left: 320px;
 	top: 0px;
 }
-
