@@ -20,6 +20,7 @@
 			// Draw the animated canvas
 			drawCanvas();
 
+			var busy = false;
 			var travID;
 			var weather = "clear";
 			var caravan = new Caravan(1, "Banker");
@@ -40,17 +41,12 @@
 
 			function travel(){
 				i = 0;
+				busy = true;
 				travID = setInterval ( () => {
 					loadInteract(getWeather());
 					if (caravan.checkForDead() == -1) {
 						console.log("Here Lies Potato");
 						clearInterval(travID);
-					}
-
-					dist = caravan.target_distance - caravan.distance;
-					console.log("Distance to Next Landmark: ", dist);
-					if (dist <= 60) {
-						animateLandmark(dist, caravan.pace, caravan.nextLandmark);
 					}
 
 					caravan.getEvent();
@@ -65,8 +61,16 @@
 					else if(caravan.nextLandmark == "flag2"){
 						caravan.goToTheDalles();
 					}
+
+					dist = caravan.target_distance - caravan.distance;
+					console.log("Distance to Next Landmark: ", dist);
 					animateWagon(caravan.pace);
+					if (dist <= 60) {
+						animateLandmark(dist, caravan.pace, caravan.nextLandmark);
+					}
+
 				}, 2000);
+				busy = false;
 			}
 
 			function doStuff(i){
@@ -236,6 +240,7 @@
 					clearInterval(travID);
 				}
 				else if(key==32) {
+					clearInterval(travID);
 					travel();
 				}
 				else if(key==67) {
