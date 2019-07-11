@@ -20,8 +20,10 @@
 			// Draw the animated canvas
 			drawCanvas();
 
+			var travID;
 			var weather = "clear";
 			var caravan = new Caravan(1, "Banker");
+			loadData(weather);
 			caravan.makeMember("Potato");
 			console.log(caravan.members);
 			console.log(caravan.day);
@@ -35,12 +37,36 @@
 			console.log(caravan.members[0].isAlive());
 			console.log("Living check", caravan.checkForDead());
 			caravan.pace = 1;
-			for(var i = 0; i < 100; i++){
-				loadInteract(getWeather());
-				res = doStuff(i);
-				if (res == -1) {
-					break;
-				}
+
+			function travel(){
+				i = 0;
+				travID = setInterval ( () => {
+					loadInteract(getWeather());
+					if (caravan.checkForDead() == -1) {
+						console.log("Here Lies Potato");
+						clearInterval(travID);
+					}
+
+					dist = caravan.target_distance - caravan.distance;
+					console.log("Distance to Next Landmark: ", dist);
+					if (dist <= 60) {
+						animateLandmark(dist, caravan.pace, caravan.nextLandmark);
+					}
+
+					caravan.getEvent();
+					console.log("Rolling along", caravan.distance);
+					console.log("Living check", caravan.checkForDead());
+					console.log("Next landmark:", caravan.nextLandmark);
+					loadInteract(getWeather());
+					loadData(getWeather());
+					if(caravan.nextLandmark == "flag1"){
+						caravan.goToGreenRiver();
+					}
+					else if(caravan.nextLandmark == "flag2"){
+						caravan.goToTheDalles();
+					}
+					animateWagon(caravan.pace);
+				}, 2000);
 			}
 
 			function doStuff(i){
@@ -202,6 +228,19 @@
 					"" + getDate() + "<br>" + weather + "<br>" + caravan.partyHealth() + "<br>" + caravan.food + "<br>" + (caravan.target_distance - caravan.distance) + "<br>" + caravan.distance
 				);
 			}
+
+			$(document).keydown(function(){
+				key = event.keyCode;
+				console.log(key)
+				if(key==13) {
+					clearInterval(travID);
+				}
+				else if(key==32) {
+					travel();
+				}
+				else if(key==67) {
+				}
+			});
 		});
 	</script>
 	<div class="frame"></div>
@@ -209,6 +248,8 @@
 		<img id="wagon" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
 		<img id="location" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
 		<canvas id="myCanvas" width="600" height="190" style="border:0px solid black;"></canvas>
+		<p class="size_up" style="font-family:georgia">
+				Press enter to size up the situation.
 		<p class="labels" style="font-family:georgia">
 				Date :<br>
 				Weather :<br>
