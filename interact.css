@@ -32,12 +32,19 @@
 	position: absolute;
 	left: 50px;
 	top: 50px;
-	color: white;
+}
+
+.data-frame{
+	position: absolute;
+	top: 215px;
+	background-color: white;
+	color: black;
+	width: 601px;
+	height: 200px;
+	left: 7px;
 }
 
 .labels{
-	position: absolute;
-	top: 215px;
 	width: 300px;
 	text-align:right;
 	font-size: 22px;
@@ -49,12 +56,13 @@
 	font-size: 22px;
 	text-align: center;
 	width: 625px;
+	color:white;
 }
 
 .data{
-	top: 215px;
 	position: absolute;
 	font-size: 22px;
 	left: 320px;
+	top: 0px;
 }
 
