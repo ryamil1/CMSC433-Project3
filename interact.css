@@ -32,5 +32,19 @@
 	position: absolute;
 	left: 50px;
 	top: 50px;
+	color: white;
+}
+
+.labels{
+	width: 300px;
+	text-align:right;
+	font-size: 22px;
+}
+
+.data{
+	top: 195px;
+	position: absolute;
+	font-size: 22px;
+	left: 320px;
 }
 

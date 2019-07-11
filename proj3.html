@@ -61,6 +61,7 @@
 					console.log("Living check", caravan.checkForDead());
 					console.log("Next landmark:", caravan.nextLandmark);
 					loadInteract(getWeather());
+					loadData(getWeather());
 					if(caravan.nextLandmark == "flag1"){
 						caravan.goToGreenRiver();
 					}
@@ -195,13 +196,30 @@
 					"&nbsp;&nbsp;Weather: " + weather + "<br>&nbsp;&nbsp;Health: " + caravan.partyHealth() + "<br>&nbsp;&nbsp;Pace: " + getPace() + "<br>&nbsp;&nbsp;Rations: " + getRations() + "<br>"
 				);
 			}
+
+			function loadData(weather){
+				$('.frame-travel').find('.data').html(
+					"" + getDate() + "<br>" + weather + "<br>" + caravan.partyHealth() + "<br>" + caravan.food + "<br>" + (caravan.target_distance - caravan.distance) + "<br>" + caravan.distance
+				);
+			}
 		});
 	</script>
 	<div class="frame"></div>
 	<div class="frame-travel">
 		<img id="wagon" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
 		<img id="location" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
-		<canvas id="myCanvas" width="600" height="190" style="border:0px solid black;">
+		<canvas id="myCanvas" width="600" height="190" style="border:0px solid black;"></canvas>
+		<p class="labels" style="font-family:georgia">
+				Date :<br>
+				Weather :<br>
+				Health :<br>
+				Food :<br>
+				Next landmark :<br>
+				Miles traveled :<br>
+		</p>
+		<p class="data" style="font-family:georgia">
+			
+		</p>
 	</div>
 	<div class="frame-interact">
 		<p class="header" style="font-family:georgia">
