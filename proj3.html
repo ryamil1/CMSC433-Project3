@@ -20,7 +20,6 @@
 			// Draw the animated canvas
 			drawCanvas();
 
-			var busy = false;
 			var travID;
 			var weather = "clear";
 			var caravan = new Caravan(1, "Banker");
@@ -41,7 +40,6 @@
 
 			function travel(){
 				i = 0;
-				busy = true;
 				travID = setInterval ( () => {
 					loadInteract(getWeather());
 					if (caravan.checkForDead() == -1) {
@@ -70,7 +68,6 @@
 					}
 
 				}, 2000);
-				busy = false;
 			}
 
 			function doStuff(i){
