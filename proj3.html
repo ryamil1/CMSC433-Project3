@@ -11,6 +11,7 @@
 <body>
 	<script>
 		$('document').ready(function() {
+			//Basic cost constants for stores
 			const OXEN = 20;
 			const CLOTHING = 10;
 			const PART = 10;
@@ -20,10 +21,12 @@
 			// Draw the animated canvas
 			drawCanvas();
 
-			var travID;
-			var weather = "clear";
-			var caravan = new Caravan(1, "Banker");
-			loadData(weather);
+			var travID;  //This cannot be cleaned up.  Variable scoping is critical to event handling
+			var weather = "clear";  //Default weather
+			var caravan = new Caravan(1, "Banker");  //Similarly, this needs to be kept here for scoping.
+
+			//Everything in this area is for testing purposes and should be cleaned, eventually.
+			loadData(weather);  
 			caravan.makeMember("Potato");
 			console.log(caravan.members);
 			console.log(caravan.day);
@@ -38,28 +41,30 @@
 			console.log("Living check", caravan.checkForDead());
 			caravan.pace = 1;
 
+			//Function to make oxen walk and stuff happen while traveling.
 			function travel(){
-				i = 0;
+				//Repeat an arbitrary number of times...
 				travID = setInterval ( () => {
-					loadInteract(getWeather());
+					loadInteract(getWeather());  
 					if (caravan.checkForDead() == -1) {
 						console.log("Here Lies Potato");
 						clearInterval(travID);
 					}
 
-					caravan.getEvent();
+					caravan.getEvent();  //critical
 					console.log("Rolling along", caravan.distance);
 					console.log("Living check", caravan.checkForDead());
 					console.log("Next landmark:", caravan.nextLandmark);
-					loadInteract(getWeather());
-					loadData(getWeather());
-					if(caravan.nextLandmark == "flag1"){
+					loadInteract(getWeather());  //testing
+					loadData(getWeather());  //critical
+					if(caravan.nextLandmark == "flag1"){ //testing
 						caravan.goToGreenRiver();
 					}
-					else if(caravan.nextLandmark == "flag2"){
+					else if(caravan.nextLandmark == "flag2"){ //also testing
 						caravan.goToTheDalles();
 					}
 
+					//this block is critical
 					dist = caravan.target_distance - caravan.distance;
 					console.log("Distance to Next Landmark: ", dist);
 					animateWagon(caravan.pace);
@@ -67,38 +72,10 @@
 						animateLandmark(dist, caravan.pace, caravan.nextLandmark);
 					}
 
-				}, 2000);
+				}, 2000); //every 2 seconds.
 			}
 
-			function doStuff(i){
-				setTimeout(function(){
-					if (caravan.checkForDead() == -1) {
-						console.log("Here Lies Potato");
-						return -1;
-					}
-
-					dist = caravan.target_distance - caravan.distance;
-					console.log("Distance to Next Landmark: ", dist);
-					if (dist <= 60) {
-						animateLandmark(dist, caravan.pace, caravan.nextLandmark);
-					}
-
-					caravan.getEvent();
-					console.log("Rolling along", caravan.distance);
-					console.log("Living check", caravan.checkForDead());
-					console.log("Next landmark:", caravan.nextLandmark);
-					loadInteract(getWeather());
-					loadData(getWeather());
-					if(caravan.nextLandmark == "flag1"){
-						caravan.goToGreenRiver();
-					}
-					else if(caravan.nextLandmark == "flag2"){
-						caravan.goToTheDalles();
-					}
-					animateWagon(caravan.pace);
-				}, 2000 * (i + 1));
-			}
-
+			//Convert pace into words.
 			function getPace(){
 				if(caravan.pace == 1){
 					return "steady";
@@ -109,6 +86,7 @@
 				}
 			}
 
+			//Convert rations into words.
 			function getRations(){
 				if(caravan.rations == 3){
 					return "filling";
@@ -119,6 +97,8 @@
 				}
 			}
 
+			//Function to handle buying things at forts.  Pass it the item number and quantity and
+			//it will do the rest
 			function buyThings(item, number){
 				var fort_cost = 1;
 				var item_cost = 0;
@@ -157,6 +137,7 @@
 				return true;
 			}
 
+			//Translate the date from number to a date.
 			function getDate(){
 				if(caravan.day > 273) {
 					//game over
@@ -182,6 +163,7 @@
 				}
 			}
 
+			//Figure out what today's weather is.
 			function getWeather(){
 				value = Math.floor(Math.random() * 100);
 				if(this.day < 60 || this.day > 210){
@@ -214,6 +196,7 @@
 				}
 			}
 
+			//Load data into the interact page.
 			function loadInteract(weather){
 				$('.frame-interact').find('.header').html(
 					"<br>" + getDate() + "<br>"
@@ -224,20 +207,25 @@
 				);
 			}
 
+			//Load data into the ui of the travel page.
 			function loadData(weather){
 				$('.frame-travel').find('.data').html(
 					"" + getDate() + "<br>" + weather + "<br>" + caravan.partyHealth() + "<br>" + caravan.food + "<br>" + (caravan.target_distance - caravan.distance) + "<br>" + caravan.distance
 				);
 			}
 
+			//This function is going to get massive, I think.  
+			//Handles key press events.
 			$(document).keydown(function(){
 				key = event.keyCode;
 				console.log(key)
+				//If key is enter, stop the game.
 				if(key==13) {
 					clearInterval(travID);
 				}
+				//If key is space, start the game.
 				else if(key==32) {
-					clearInterval(travID);
+					clearInterval(travID); //This prevents warp speed.
 					travel();
 				}
 				else if(key==67) {
