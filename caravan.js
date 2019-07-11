@@ -10,6 +10,7 @@ class Caravan {
 		this.nextLandmark = "Kansas River Crossing"; //needs the ui to reach in and change this based on player decisions
 		this.eventLocked = 0; //tracks days which need to tick for multi-day events
 		this.fort = 1;
+
 		this.members = [];
 		this.oxen = 0;
 		this.food = 0;

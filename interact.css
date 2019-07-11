@@ -1,23 +1,26 @@
+body {
+	background-color: #FFF;
+}
+
 .header{
-	text-align: center
+	text-align: center;
 }
 
 .frame{
 	position: absolute;
-	left:16px;
-	top:195px;
+	left:45px;
+	top:45px;
 	background-color:black;
 	height: 430px;
-	width: 600;
-	
+	width: 625px;
 }
 
 .frame-interact{
 	position: absolute;
-	left: 16px;
-	top: 195px;
+	left: 850px;
+	top: 50px;
 	height: 420px;
-	width: 600px;
+	width: 615px;
 	color: white;
 	background-color: black;
 }
@@ -29,3 +32,40 @@
 	background-color: white;
 }
 
+.frame-travel{
+	position: absolute;
+	left: 50px;
+	top: 50px;
+}
+
+.data-frame{
+	position: absolute;
+	top: 215px;
+	background-color: white;
+	color: black;
+	width: 601px;
+	height: 200px;
+	left: 7px;
+}
+
+.labels{
+	width: 300px;
+	text-align:right;
+	font-size: 22px;
+}
+
+.size_up{
+	top: 170px;
+	position: absolute;
+	font-size: 22px;
+	text-align: center;
+	width: 625px;
+	color:white;
+}
+
+.data{
+	position: absolute;
+	font-size: 22px;
+	left: 320px;
+	top: 0px;
+}
