@@ -1,19 +1,36 @@
 var tID; //we will use this variable to clear the setInterval()
 var tID2;
 
+function drawEnvironment(weather) {
+	var c = document.getElementById("myCanvas");
+	var ctx = c.getContext("2d");
+
+	if (weather == "cold") {
+		ctx.fillStyle = "#ccfff9";
+	}
+	else if (weather == "hot" || weather == "very hot") {
+		ctx.fillStyle = "#faf4b9";
+	}
+	else {
+		ctx.fillStyle = "#25d931";
+	}
+
+	ctx.fillRect(0, 115, c.width, 75);
+}
+
 function drawCanvas() {
 	var c = document.getElementById("myCanvas");
 	var ctx = c.getContext("2d");
 	var ctx2 = c.getContext("2d");
 	ctx.fillStyle = "black";
 	ctx.fillRect(0, 0, c.width, c.height);
-	ctx2.fillStyle = "#25d931";
-	ctx2.fillRect(0, 115, c.width, 75);
-
+	drawEnvironment("cool");
 	var canvas = document.getElementById("myCanvas");
 	var ctx = canvas.getContext("2d");
 	var img = document.getElementById("wagon");
 	var img2 = document.getElementById("location");
+
+	// if statement to change background to mountains in later part of the game
 	ctx.drawImage(img2, 5, 275, 279, 11, 0, 25, 600, 25);			// draw the background
 }
 
