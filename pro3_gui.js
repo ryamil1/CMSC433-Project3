@@ -1,7 +1,7 @@
 var tID; //we will use this variable to clear the setInterval()
 var tID2;
 
-function drawEnvironment(weather) {
+function drawEnvironment(weather, phase) {
 	var c = document.getElementById("myCanvas");
 	var ctx = c.getContext("2d");
 
@@ -14,24 +14,46 @@ function drawEnvironment(weather) {
 	else {
 		ctx.fillStyle = "#25d931";
 	}
-
 	ctx.fillRect(0, 115, c.width, 75);
-}
-
-function drawCanvas() {
-	var c = document.getElementById("myCanvas");
-	var ctx = c.getContext("2d");
-	var ctx2 = c.getContext("2d");
-	ctx.fillStyle = "black";
-	ctx.fillRect(0, 0, c.width, c.height);
-	drawEnvironment("cool");
-	var canvas = document.getElementById("myCanvas");
-	var ctx = canvas.getContext("2d");
-	var img = document.getElementById("wagon");
-	var img2 = document.getElementById("location");
+	
+	var img = document.getElementById("location");
 
 	// if statement to change background to mountains in later part of the game
-	ctx.drawImage(img2, 5, 275, 279, 11, 0, 10, 600, 40);			// draw the background
+	if (phase == 0) {
+		ctx.drawImage(img, 5, 275, 279, 11, 0, 10, 600, 40);			// draw the background
+	}
+	else {
+		ctx.drawImage(img, 5, 290, 279, 19, 0, 10, 600, 40);			// draw the background			
+	}
+}
+	
+// Phase 1 - Grass
+// Phase 2 - Mountains
+function drawCanvas(phase) {
+	var c = document.getElementById("myCanvas");
+	var ctx = c.getContext("2d");
+	ctx.fillStyle = "black";
+	ctx.fillRect(0, 0, c.width, c.height);
+	drawEnvironment("cool", phase);
+}
+
+// Draw the Game Over Screen
+function drawGrave() {
+	var c = document.getElementById("myCanvas");
+	$("#data").remove();
+	$("#info").remove();
+	c.width = 625;
+	c.height = 430;
+	var ctx = c.getContext("2d");
+	ctx.fillStyle = "black";
+	ctx.fillRect(0, 0, c.width, c.height);
+	
+	// Draw Grass
+	ctx.fillStyle = "#25d931";
+	ctx.fillRect(0, c.height/2, c.width, c.height/2);
+
+	// Draw Gravestone
+	
 }
 
 // Speeds

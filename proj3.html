@@ -17,12 +17,12 @@
 			const PART = 10;
 			const AMMO = .40;
 			const FOOD = .2;
-			// Draw the animated canvas
-			drawCanvas(1);
 			var travID;  //This cannot be cleaned up.  Variable scoping is critical to event handling
 			var weather = "clear";  //Default weather
 			var caravan = new Caravan(1, "Banker");  //Similarly, this needs to be kept here for scoping.
 			//Everything in this area is for testing purposes and should be cleaned, eventually.
+			// Draw the animated canvas
+			drawCanvas(caravan.location);
 			loadData(weather);  
 			caravan.makeMember("Potato");
 			console.log(caravan.members);
@@ -44,6 +44,8 @@
 					if (caravan.checkForDead() == -1) {
 						console.log("Here Lies Potato");
 						clearInterval(travID);
+						drawGrave();
+						return -1;
 					}
 					caravan.getEvent();  //critical
 					console.log("Rolling along", caravan.distance);
@@ -189,7 +191,7 @@
 			}
 			//Load data into the ui of the travel page.
 			function loadData(weather){
-				drawEnvironment(weather);
+				drawEnvironment(weather, caravan.location);
 				$('.frame-travel').find('.data').html(
 					"" + getDate() + "<br>" + weather + "<br>" + caravan.partyHealth() + "<br>" + caravan.food + "<br>" + (caravan.target_distance - caravan.distance) + "<br>" + caravan.distance
 				);
@@ -218,9 +220,9 @@
 		<img id="wagon" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
 		<img id="location" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
 		<canvas id="myCanvas" width="600" height="190" style="border:0px solid black;"></canvas>
-		<p class="size_up" style="font-family:georgia">
+		<p id="info" class="size_up" style="font-family:georgia">
 				Press enter to size up the situation.
-		<div class="data-frame"><p class="labels" style="font-family:georgia">
+		<div id="data" class="data-frame"><p class="labels" style="font-family:georgia">
 				Date :<br>
 				Weather :<br>
 				Health :<br>

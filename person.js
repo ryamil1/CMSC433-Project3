@@ -1,7 +1,7 @@
 class Person{
 	constructor(name){
 		this.name = name;
-		this.health = 10000;
+		this.health = 100;
 		this.is_diseased = false;
 	}
 
