@@ -240,6 +240,17 @@
 							$('.frame-travel').show();
 							$('.frame-intro').hide();
 							travel();
+						} else if (cur == 2){
+							$.get( "getTen.php", function(data){
+								pairs = data.split("\n");
+								pairs.forEach(function(element){
+									player = element.split(',');
+									$('.frame-hall').find('#players').append(player[0] + "     " + player[1]);
+								});
+								console.log(pairs);
+								$('.frame-hall').show();
+								$('.frame-intro').hide();
+							});
 						}
 					}
 				}	
@@ -296,6 +307,12 @@
 	<div class="frame frame-image" style="display: none;">
 	</div>
 	<div class="frame frame-text" style="display: none;">
+	</div>
+	<div class="frame frame-hall" style="display:none;">
+		<p id="columns" style="font-family:georgia">
+		</p>
+		<p id="players" style="font-family:georgia">
+		</p>
 	</div>
 	<div class="frame frame-intro">
 		<p class="title" style="font-family:georgia">
