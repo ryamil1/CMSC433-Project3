@@ -11,7 +11,6 @@ class Person{
 			this.health -= 3;
 		}
 		if(this.health > 100){
-			//this.health = 100;
 			this.health = 100;
 		}
 	}

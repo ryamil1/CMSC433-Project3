@@ -168,3 +168,15 @@ Ft. Hall       |100%|  $40  | $20.00 | $4.00 |$.40|
 Ft. Boise      |125%|  $45  | $22.50 | $4.50 |$.45|
 Ft. Walla Walla|150%|  $50  | $25.00 | $5.00 |$.50|
 ---------------+----+-------+--------+-------+----+
+
+
+TO-DO:
+---------------------------------------------------------------------------------------------------------------------------------------------
+     - Database update at end of game
+     - Finishing/fixing game over (I can't tell if you were done and I broke it or if it wasn't done)
+     - Rafting game
+     - Intro sequence
+     - Adding hooks in the interaction screen to do things like fishing, changing pace, etc.
+     - Add events and event pop-ups.
+
+In terms of priority, I'm inclined to approach the rafting game last just because it's probably going to be super fiddly and time consuming.

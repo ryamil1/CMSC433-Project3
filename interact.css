@@ -8,6 +8,60 @@ body {
 
 .frame{
 	position: absolute;
+	left: 50px;
+	top: 50px;
+	height: 420px;
+	width: 615px;
+}
+
+.frame-hall{
+	color:white;
+}
+
+#columns{
+	position:absolute;
+	left:40px;
+	font-size:22px;
+}
+
+#players{
+	font-size: 22px;
+	position: absolute;
+	top: 50px;
+	width: 300px;
+	left: 40px;
+}
+
+#scores{
+	font-size: 22px;
+	position: absolute;
+	top: 50px;
+	left: 365px;
+}
+
+.frame-intro{
+	color: white;
+}
+
+.title{
+	text-align: center;
+	width: 615px;
+	font-size: 60px;
+}
+
+#options{
+	font-size: 22px;
+}
+
+#response{
+	position: absolute;
+	top: 345px;
+	left: 300px;
+	font-size: 22px;
+}
+
+.border{
+	position: absolute;
 	left:45px;
 	top:45px;
 	background-color:black;
@@ -16,13 +70,14 @@ body {
 }
 
 .frame-interact{
-	position: absolute;
-	left: 850px;
-	top: 50px;
-	height: 420px;
-	width: 615px;
 	color: white;
 	background-color: black;
+}
+
+.response{
+	position: absolute;
+	left: 300px;
+	top: 372px;
 }
 
 .status{
