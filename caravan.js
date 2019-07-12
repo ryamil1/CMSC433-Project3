@@ -1,5 +1,5 @@
 class Caravan {
-	constructor(day, career) {
+	constructor(day, career = "Banker") {
 		this.day = day;
 		this.distance = 0;
 		this.target_distance = 102;
@@ -11,6 +11,14 @@ class Caravan {
 		this.eventLocked = 0; //tracks days which need to tick for multi-day events
 		this.fort = 1;
 
+		if(career == "Banker"){
+			this.money = 1600;
+		} else if(career == "Carpenter") {
+			this.money = 800;
+		} else if(career == "Farmer"){
+			this.money = 400;
+		}
+
 		this.members = [];
 		this.oxen = 0;
 		this.food = 0;
@@ -19,7 +27,6 @@ class Caravan {
 		this.wheel = 0;
 		this.axle = 0;
 		this.clothes = 0;
-		this.money = 0;
 		this.job = career;
 	}
 
