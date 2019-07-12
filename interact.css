@@ -1,25 +1,83 @@
+body {
+	background-color: #FFF;
+}
+
 .header{
-	text-align: center
+	text-align: center;
 }
 
 .frame{
 	position: absolute;
-	left:645px;
+	left: 50px;
+	top: 50px;
+	height: 420px;
+	width: 615px;
+}
+
+.frame-hall{
+	color:white;
+}
+
+#columns{
+	position:absolute;
+	left:40px;
+	font-size:22px;
+}
+
+#players{
+	font-size: 22px;
+	position: absolute;
+	top: 50px;
+	width: 300px;
+	left: 40px;
+}
+
+#scores{
+	font-size: 22px;
+	position: absolute;
+	top: 50px;
+	left: 365px;
+}
+
+.frame-intro{
+	color: white;
+}
+
+.title{
+	text-align: center;
+	width: 615px;
+	font-size: 60px;
+}
+
+#options{
+	font-size: 22px;
+}
+
+#response{
+	position: absolute;
+	top: 345px;
+	left: 300px;
+	font-size: 22px;
+}
+
+.border{
+	position: absolute;
+	left:45px;
 	top:45px;
 	background-color:black;
 	height: 430px;
-	width: 510px;
-	
+	width: 625px;
 }
 
 .frame-interact{
-	position: absolute;
-	left: 650px;
-	top: 50px;
-	height: 420px;
-	width: 500px;
 	color: white;
 	background-color: black;
+}
+
+.response{
+	position: absolute;
+	left: 300px;
+	top: 372px;
 }
 
 .status{
@@ -29,3 +87,40 @@
 	background-color: white;
 }
 
+.frame-travel{
+	position: absolute;
+	left: 50px;
+	top: 50px;
+}
+
+.data-frame{
+	position: absolute;
+	top: 215px;
+	background-color: white;
+	color: black;
+	width: 601px;
+	height: 200px;
+	left: 7px;
+}
+
+.labels{
+	width: 300px;
+	text-align:right;
+	font-size: 22px;
+}
+
+.size_up{
+	top: 170px;
+	position: absolute;
+	font-size: 22px;
+	text-align: center;
+	width: 625px;
+	color:white;
+}
+
+.data{
+	position: absolute;
+	font-size: 22px;
+	left: 320px;
+	top: 0px;
+}
