@@ -18,6 +18,27 @@ body {
 	color:white;
 }
 
+#columns{
+	position:absolute;
+	left:40px;
+	font-size:22px;
+}
+
+#players{
+	font-size: 22px;
+	position: absolute;
+	top: 50px;
+	width: 300px;
+	left: 40px;
+}
+
+#scores{
+	font-size: 22px;
+	position: absolute;
+	top: 50px;
+	left: 365px;
+}
+
 .frame-intro{
 	color: white;
 }
@@ -33,6 +54,9 @@ body {
 }
 
 #response{
+	position: absolute;
+	top: 345px;
+	left: 300px;
 	font-size: 22px;
 }
 

@@ -230,6 +230,14 @@
 
 					}
 				}
+				else if(activeFrame == "frame frame-hall"){
+					//If the game is over, let them enter letters.
+					if(0){}
+					else if(key_code==32){
+						$('.frame-hall').hide();
+						$('.frame-intro').show();
+					}
+				}
 				else if(activeFrame == "frame frame-intro"){
 					if(key_code >= 49 && key_code <= 51){
 						$('.frame-intro').find('#response').html(event.key);
@@ -241,12 +249,14 @@
 							$('.frame-intro').hide();
 							travel();
 						} else if (cur == 2){
+							$('.frame-intro').find('#response').html(" ");
 							$.get( "getTen.php", function(data){
 								pairs = data.split("\n");
-								pairs.forEach(function(element){
-									player = element.split(',');
-									$('.frame-hall').find('#players').append(player[0] + "     " + player[1]);
-								});
+								for(var i = 0; i < 10; i++){
+									player = pairs[i].split(',');
+									$('.frame-hall').find('#players').append(player[0] + "<br>");
+									$('.frame-hall').find('#scores').append(player[1] + "<br>");
+								}
 								console.log(pairs);
 								$('.frame-hall').show();
 								$('.frame-intro').hide();
@@ -309,9 +319,11 @@
 	<div class="frame frame-text" style="display: none;">
 	</div>
 	<div class="frame frame-hall" style="display:none;">
-		<p id="columns" style="font-family:georgia">
+		<p id="columns" style="font-family:georgia"><u>Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Scores</u>
 		</p>
 		<p id="players" style="font-family:georgia">
+		</p>
+		<p id="scores" style="font-family:georgia">
 		</p>
 	</div>
 	<div class="frame frame-intro">
