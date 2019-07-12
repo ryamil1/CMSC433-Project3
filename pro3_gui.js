@@ -38,6 +38,7 @@ function drawCanvas(phase) {
 }
 
 // Draw the Game Over Screen
+
 function drawGrave(player) {
 	var c = document.getElementById("myCanvas");
 	$("#data").hide();
