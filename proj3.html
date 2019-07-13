@@ -42,6 +42,7 @@
 			caravan.pace = 1;
 			//Function to make oxen walk and stuff happen while traveling.
 			function travel(){
+				console.log(caravan.members)
 				//Repeat an arbitrary number of times...
 				travID = setInterval ( () => {
 					loadInteract(getWeather()); 
@@ -456,28 +457,34 @@
 						var cur = $('.frame-choice').find('#choice_res').html(" ");
 					} else if(key_code == 13){
 						var cur = $('.frame-choice').find('#choice_res').html();
+						cara_members = caravan.members;
 						if (cur == 1){
 							caravan = new Caravan (1,job);
+							caravan.members = cara_members;
 							$('.frame-choice').hide();
 							loadStore();
 							$('.frame-store').show();
 						} else if (cur == 2){
 							caravan = new Caravan (31,job);
+							caravan.members = cara_members;
 							$('.frame-choice').hide();
 							loadStore();
 							$('.frame-store').show();
 						} else if (cur == 3){
 							caravan = new Caravan (62,job);
+							caravan.members = cara_members;
 							$('.frame-choice').hide();
 							loadStore();
 							$('.frame-store').show();
 						} else if (cur == 3){
 							caravan = new Caravan (92,job);
+							caravan.members = cara_members;
 							$('.frame-choice').hide();
 							loadStore();
 							$('.frame-store').show();
 						} else if (cur == 3){
 							caravan = new Caravan (123,job);
+							caravan.members = cara_members;
 							$('.frame-choice').hide();
 							loadStore();
 							$('.frame-store').show();
@@ -565,6 +572,10 @@
 							seq_c = 0;
 							$('.frame-names').find('#confirm').hide();
 						} else{
+							console.log( 
+
+
+							)
 							caravan.makeMember($('.frame-names').find('#names_res1').html());
 							caravan.makeMember($('.frame-names').find('#names_res2').html());
 							caravan.makeMember($('.frame-names').find('#names_res3').html());
