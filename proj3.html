@@ -55,15 +55,15 @@
 						drawGrave(dead);		// event(All People are dead);
 					}
 
-					/* When you need to cross a river
-					if (cross) {
+					// When you need to cross a river
+					if (1) {
 						console.log("Crossing River");
 						clearInterval(travID);
 						crossRiver("ford", false);				// (method, result)
 						cross = false;
 						drawCanvas(caravan.location, getWeather);
 					}
-					*/
+					
 					
 					caravan.getEvent();  //critical
 					console.log("Rolling along", caravan.distance);
@@ -465,29 +465,35 @@
 						}
 						var cur = $('.frame-choice').find('#choice_res').html(" ");
 					} else if(key_code == 13){
+						var car_mem = caravan.members;
 						var cur = $('.frame-choice').find('#choice_res').html();
 						if (cur == 1){
 							caravan = new Caravan (1,job);
+							caravan.members = car_mem;
 							$('.frame-choice').hide();
 							loadStore();
 							$('.frame-store').show();
 						} else if (cur == 2){
 							caravan = new Caravan (31,job);
+							caravan.members = car_mem;
 							$('.frame-choice').hide();
 							loadStore();
 							$('.frame-store').show();
 						} else if (cur == 3){
 							caravan = new Caravan (62,job);
+							caravan.members = car_mem;
 							$('.frame-choice').hide();
 							loadStore();
 							$('.frame-store').show();
 						} else if (cur == 3){
 							caravan = new Caravan (92,job);
+							caravan.members = car_mem;
 							$('.frame-choice').hide();
 							loadStore();
 							$('.frame-store').show();
 						} else if (cur == 3){
 							caravan = new Caravan (123,job);
+							caravan.members = car_mem;
 							$('.frame-choice').hide();
 							loadStore();
 							$('.frame-store').show();
