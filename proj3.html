@@ -47,13 +47,11 @@
 							drawGrave(first);
 							return -1;
 						} else { //only one death
-							console.log("Before:", eventID);
 							if(eventID == ""){
 								eventID = (dead + " has died.<br>");
 							} else{
 							eventID += (dead + " has died.<br>");
 							}
-							console.log("After:", eventID);
 							dead = caravan.checkForDead();
 						}
 					}
@@ -391,12 +389,21 @@
 									getWeather();
 									loadInteract(weather);
 									dead = caravan.checkForDead();
-									if(dead == -1){
-										$('.frame:visible').find('.event').hide();
-										drawGrave(dead);
-									}
-									else if (dead){
-										makeEvent(dead + " has died.");
+									while(dead){
+										if (dead == -1) { //game over
+											console.log("Here Lies Potato");
+											clearInterval(travID);
+											$('.frame:visible').find('.event').hide();
+											drawGrave(first);
+											return -1;
+										} else { //only one death
+											if(eventID == ""){
+												eventID = (dead + " has died.<br>");
+											} else{
+											eventID += (dead + " has died.<br>");
+											}
+											dead = caravan.checkForDead();
+										}
 									}
 								}
 							}
