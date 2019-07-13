@@ -22,61 +22,98 @@
 			var weather = "clear";  //Default weather
 			var caravan = new Caravan(1);  //Similarly, this needs to be kept here for scoping.
 			var item_being_bought = 0;
-			var seq_c = 0; //Variable used to track where the game is in a sequence of frames, e.g. the intro.
+			var eventID = "";
+			var first;
+			var seq_c = 0;//Variable used to track where the game is in a sequence of frames, e.g. the intro.
 			//Everything in this area is for testing purposes and should be cleaned, eventually.
 			// Draw the animated canvas
 			drawCanvas(caravan.location);
 			loadData(weather);  
-			caravan.makeMember("Potato");
-			loadRations();
-			console.log(caravan.members);
-			console.log(caravan.day);
-			caravan.goFishing();
-			console.log(caravan.food);
-			caravan.rest(1);
-			console.log(caravan.food);
-			caravan.rest(2);
-			console.log(caravan.food);
-			console.log(caravan.members[0].isAlive());
-			console.log("Living check", caravan.checkForDead());
 			caravan.pace = 1;
 			//Function to make oxen walk and stuff happen while traveling.
 			function travel(){
 				console.log(caravan.members)
 				//Repeat an arbitrary number of times...
 				travID = setInterval ( () => {
+					var isLocked = caravan.eventLocked;
 					loadInteract(getWeather()); 
+					//If checkForDead returns a non-falsey value, keep calling it.
 					dead = caravan.checkForDead()
-					
-					if (dead == -1) { //game over
-						console.log("Here Lies Potato");
-						clearInterval(travID);
-						return -1;
-					} else if (dead){ //only one death
-						drawGrave(dead);
-//						event(dead, "has died");
+					while(dead){
+						if (dead == -1) { //game over
+							console.log("Here Lies Potato");
+							clearInterval(travID);
+							$('.frame:visible').find('.event').hide();
+							drawGrave(first);
+							return -1;
+						} else { //only one death
+							console.log("Before:", eventID);
+							if(eventID == ""){
+								eventID = (dead + " has died.<br>");
+							} else{
+							eventID += (dead + " has died.<br>");
+							}
+							console.log("After:", eventID);
+							dead = caravan.checkForDead();
+						}
 					}
-					caravan.getEvent();  //critical
+
+					//Get a random event.
+					eventID += caravan.getEvent();  //critical
+					if(eventID != ""){
+						console.log(">>>", eventID);
+						makeEvent(eventID);
+					}
+
 					console.log("Rolling along", caravan.distance);
-					console.log("Living check", caravan.checkForDead());
 					console.log("Next landmark:", caravan.nextLandmark);
 					loadInteract(getWeather());  //testing
+					//Update the page
 					loadData(getWeather());  //critical
+
+					//Handle landmarks
 					if(caravan.nextLandmark == "flag1"){ //testing
 						caravan.goToGreenRiver();
 					}
 					else if(caravan.nextLandmark == "flag2"){ //also testing
 						caravan.goToTheDalles();
 					}
-					//this block is critical
+
+					//Animate the wagon moving.
 					dist = caravan.target_distance - caravan.distance;
 					console.log("Distance to Next Landmark: ", dist);
-					animateWagon(caravan.pace);
-					if (dist <= 60) {
-						animateLandmark(dist, caravan.pace, caravan.nextLandmark);
+					if(!isLocked){
+						animateWagon(caravan.pace);
+						if (dist <= 60) {
+							animateLandmark(dist, caravan.pace, caravan.nextLandmark);
+						}
 					}
+
+					//If there was an event...
+					if(eventID){
+						//clear it.
+						eventID = "";
+						//If the event did not lock the travel, terminate travel.
+						if(!caravan.eventLocked){
+							clearInterval(travID);
+						}
+					//If the travel was locked for 1 day at the start of the function,
+					//the event has just finished and travel() needs to stop.
+					} else if(isLocked == 1){
+						clearInterval(travID);						
+					}
+					
 				}, 2000); //every 2 seconds.
 			}
+
+			//Make an event pop-up.
+			function makeEvent(str){
+				console.log(str);
+				console.log(">>>", $('.frame:visible'), str);
+				$('.frame:visible').find('.event').html(str);
+				$('.frame:visible').find('.event').show();
+			}
+
 			//Convert pace into words.
 			function getPace(){
 				if(caravan.pace == 1){
@@ -87,6 +124,7 @@
 					return "grueling";
 				}
 			}
+
 			//Convert rations into words.
 			function getRations(){
 				if(caravan.rations == 3){
@@ -154,6 +192,7 @@
 				return true;
 			}
 
+			//Function to help calculate store prices to populate that menu
 			function getCost(item){
 				if(item == 1){
 					return OXEN * (1 + (caravan.fort - 1) / 4);
@@ -311,8 +350,19 @@
 				var activeFrame = $('.frame:visible').attr('class');
 				//Handle based on active frame.
 				if(activeFrame == "frame frame-travel") {
-					//If key is enter, stop the game.
-					if(key_code==13) {
+					if($('.event:visible').length){
+						//If the event pop-up is visible...
+						if(caravan.eventLocked == 0 && key_code == 13){
+							$('.frame-travel').find('.event').hide();
+							clearInterval(travID);
+							travel();
+						} else if(caravan.eventLocked == 0 && key_code == 32){
+							$('.frame-travel').find('.event').hide();
+							$('.frame-travel').hide();
+							$('.frame-interact').show();
+						}
+					} else if(key_code==13) {
+						//If key is enter, stop the game.
 						clearInterval(travID);
 						$('.frame-travel').hide();
 						$('.frame-interact').show();
@@ -342,10 +392,11 @@
 									loadInteract(weather);
 									dead = caravan.checkForDead();
 									if(dead == -1){
-										//game over
+										$('.frame:visible').find('.event').hide();
+										drawGrave(dead);
 									}
 									else if (dead){
-										drawGrave(dead);
+										makeEvent(dead + " has died.");
 									}
 								}
 							}
@@ -361,23 +412,24 @@
 							clearInterval(travID); //This prevents warp speed.
 							$('.frame-travel').show();
 							$('.frame-interact').hide();
+							$('.frame-interact').find('.response').html("");
 							travel();
 						} else if(num == 2){
 							seq_c = 0;
 							loadSupplies();
-							$('.frame-interact').find('.response').html();
+							$('.frame-interact').find('.response').html("");
 							$('.frame-interact').hide();
 							$('.frame-supplies').show();
 						} else if(num == 4){
 							seq_c = 0;
 							loadPace();
-							$('.frame-interact').find('.response').html();
+							$('.frame-interact').find('.response').html("");
 							$('.frame-interact').hide();
 							$('.frame-pace').show();
 						} else if(num == 5){
 							seq_c = 0;
 							loadRations();
-							$('.frame-interact').find('.response').html();
+							$('.frame-interact').find('.response').html("");
 							$('.frame-interact').hide();
 							$('.frame-rations').show();
 						} else if(num == 6){
@@ -394,7 +446,7 @@
 							seq_c = 3;
 						} else if(num == 9){
 							seq_c = 0;
-							$('.frame-interact').find('.response').html();
+							$('.frame-interact').find('.response').html("");
 							$('.frame-interact').hide();
 							$('.frame-store').show();
 						}
@@ -500,6 +552,7 @@
 					else if(seq_c == 0 && key_code == 13) {
 						if($('.frame-store').find('#store-choice').html() == 8){
 							item_being_bought = 0;
+							loadInteract(weather);
 							$('.frame-store').find('#store-choice').html("");
 							$('.frame-store').hide();
 							$('.frame-interact').show();
@@ -509,7 +562,7 @@
 							$('.frame-store').find('#s_num').show();
 							seq_c = 1;
 						}
-					} else if (key_code >= 48 && key_code <= 57){
+					} else if (seq_c == 1 && key_code >= 48 && key_code <= 57){
 						$('.frame-store').find('#store-choice2').append(event.key);
 					} else if (key_code == 13){
 						buyThings(item_being_bought, $('.frame-store').find('#store-choice2').html());
@@ -576,6 +629,7 @@
 
 
 							)
+							first = $('.frame-names').find('#names_res1').html();
 							caravan.makeMember($('.frame-names').find('#names_res1').html());
 							caravan.makeMember($('.frame-names').find('#names_res2').html());
 							caravan.makeMember($('.frame-names').find('#names_res3').html());
@@ -625,6 +679,7 @@
 		<canvas id="myCanvas" width="600" height="190" style="border:0px solid black;"></canvas>
 		<p id="info" class="size_up" style="font-family:georgia">
 				Press enter to size up the situation.
+		</p>
 		<div id="data" class="data-frame"><p class="labels" style="font-family:georgia">
 				Date :<br>
 				Weather :<br>
@@ -634,8 +689,9 @@
 				Miles traveled :<br>
 		</p>
 		<p class="data" style="font-family:georgia">
-			
-		</p></div>
+		</p>
+		</div>
+		<p class="event" style="font-family:georgia;display: none;"></p>
 	</div>
 	<div class="frame frame-interact" style="font-family:georgia;display:none;">
 		<p class="header" style="font-family:georgia">
@@ -663,6 +719,7 @@
 		</p>
 		<p class="response" style="font-family:georgia">
 		</p>
+		<p class="event" style="font-family:georgia;display: none;"></p>
 		<div id="alert" style="font-family:georgia;display:none;">
 		</div>
 		<p id="rest" style="font-family:georgia;display:none;">How many days would you like to rest?
@@ -783,7 +840,7 @@
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3. a grueling pace<br><br>
 			What is your choice?
 		</p>
-		<p id="pace-choice" > ttt
+		<p id="pace-choice" > 
 		</p>
 	</div>
 	<div class="frame frame-rations" style="font-family:georgia;display:none;">
@@ -796,7 +853,7 @@
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3. bare bones - meals are small and everyone stays hungry<br><br>
 			What is your choice?
 		</p>
-		<p id="rations-choice" > ttt
+		<p id="rations-choice" > 
 		</p>
 	</div>
 

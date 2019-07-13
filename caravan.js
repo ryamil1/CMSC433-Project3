@@ -31,30 +31,37 @@ class Caravan {
 	}
 
 	getEvent(){
+		var event = "";
+		if(!this.eventLocked){
+			var randID = Math.floor(Math.random() * 100);
+			if(randID > 98){
+				event = "Lost the trail. Lose " + 4 + " days.";
+				this.eventLocked = 4;
+			}
+			this.setDistance();
 		//random to get event
 		//huge case statement
 		//each event controls the update of health and distance
-		this.setDistance();
+		} else{
+			this.eventLocked -= 1;
+		} 
 		this.setFood();
 		var pass_rat = this.mapRationToHealth();
 		var pass_pace = this.mapPaceToHealth();
 		this.members.forEach(function(element){
 			element.setHealth(pass_rat, pass_pace);
-			console.log("Member check:", element.name, element.health)
 		});
 		this.day++;
+		return event;
 	}
 
 	setFood(){
 		var consumption = this.members.length * this.rations;
 		if(consumption > this.food){
-			console.log("Starving")
 			this.starving = true;
 			this.food = 0;
 		}
 		else {
-			console.log("Not starving.", this.starving);
-			console.log("food", this.food);
 			this.starving = false;
 			this.food -= consumption;
 		}
@@ -207,7 +214,6 @@ class Caravan {
 
 	//Generate a random amount of food from 15-100, return the value gained.
 	goFishing(){
-		console.log("Going fishing.")
 		var fish = 15 + Math.floor(Math.random() * 85);
 		this.food += fish;
 		this.setFood();
@@ -217,7 +223,7 @@ class Caravan {
 
 	mapRationToHealth(){
 		if(this.starving){
-			return -3;
+			return -4;
 		}	
 
 		if(this.rations == 3){
@@ -264,6 +270,7 @@ class Caravan {
 			this.members.splice(re_index, 1);
 		}
 
+		console.log("Checking for dead:", r_val)
 		//If nobody died, this is false, else it is the name of the dead person.
 		return r_val;
 	}
