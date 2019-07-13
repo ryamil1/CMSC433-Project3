@@ -201,7 +201,7 @@ class Caravan {
 			}
 			element.setHealth(ration_val, 0, rest_val);
 		});
-		this.time += 1;
+		this.day += 1;
 		animateWagon(this.pace);
 	}
 
@@ -211,7 +211,7 @@ class Caravan {
 		var fish = 15 + Math.floor(Math.random() * 85);
 		this.food += fish;
 		this.setFood();
-		this.time += 1;
+		this.day += 1;
 		return fish;
 	}
 
