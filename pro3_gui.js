@@ -1,7 +1,8 @@
 var tID; //we will use this variable to clear the setInterval()
 var tID2;
+var tID3
 
-function drawEnvironment(weather, phase) {
+function drawEnvironment(phase, weather) {
 	var c = document.getElementById("myCanvas");
 	var ctx = c.getContext("2d");
 
@@ -29,12 +30,12 @@ function drawEnvironment(weather, phase) {
 	
 // Phase 1 - Grass
 // Phase 2 - Mountains
-function drawCanvas(phase) {
+function drawCanvas(phase, weather) {
 	var c = document.getElementById("myCanvas");
 	var ctx = c.getContext("2d");
 	ctx.fillStyle = "black";
 	ctx.fillRect(0, 0, c.width, c.height);
-	drawEnvironment("cool", phase);
+	drawEnvironment(phase, weather);
 }
 
 // Draw the Game Over Screen
@@ -42,7 +43,8 @@ function drawGrave(player) {
 	var c = document.getElementById("myCanvas");
 	$("#data").hide();
 	$("#info").hide();
-	$("wagon").remove();
+	$("#wagon").remove();
+	$("#location").remove();
 	c.width = 625;
 	c.height = 430;
 	var ctx = c.getContext("2d");
@@ -110,21 +112,11 @@ function animateLandmark(distance, pace, landmark) {
 	var ctx = c.getContext("2d"); 
 	var img = document.getElementById("location");
 	var position = 340 - (distance * 7);
+	console.log(landmark);
+	console.log("Position: ", position);
 
-/*	if (landmark == "Kansas River Crossing") {
-		console.log("Position: ", position);
-		ctx.drawImage(img, 140, 125, 63, 20, position, 70, 90, 45);
-		//drawImage()
-
-		setTimeout(function() {
-			ctx.fillStyle = "black";
-			ctx.fillRect(position, 70, 90, 45);
-		}, 2000);
-	}
-*/
 	// Landmarks
-	if (landmark == "Kansas River Crossing" || landmark == "Big Blue River Crossing" || "Green River" || "Snake River Crossing") {
-		console.log("Position: ", position);
+	if (landmark == "Kansas River Crossing" || landmark == "Big Blue River Crossing" || landmark == "Green River" || landmark == "Snake River Crossing") {
 		ctx.drawImage(img, 205, 58, 55, 23, position, 70, 90, 45);
 
 		setTimeout(function() {
@@ -133,7 +125,6 @@ function animateLandmark(distance, pace, landmark) {
 		}, 2000);
 	}
 	else if (landmark == "Fort Kearney") {
-		console.log("Position: ", position);
 		ctx.drawImage(img, 215, 35, 50, 23, position, 70, 90, 45);
 
 		setTimeout(function() {
@@ -142,8 +133,7 @@ function animateLandmark(distance, pace, landmark) {
 		}, 2000);
 	}
 	else if (landmark == "Chimney Rock") {
-		console.log("Position: ", position);
-		ctx.drawImage(img, 145, 35, 35, 23, position, 70, 75, 45);
+		ctx.drawImage(img, 145, 35, 35, 23, position, 70, 90, 45);
 
 		setTimeout(function() {
 			ctx.fillStyle = "black";
@@ -151,8 +141,7 @@ function animateLandmark(distance, pace, landmark) {
 		}, 2000);
 	}
 	else if (landmark == "Fort Laramie") {
-		console.log("Position: ", position);
-		ctx.drawImage(img, 250, 145, 60, 23, position, 70, 75, 45);
+		ctx.drawImage(img, 250, 145, 60, 23, position, 70, 90, 45);
 
 		setTimeout(function() {
 			ctx.fillStyle = "black";
@@ -160,8 +149,7 @@ function animateLandmark(distance, pace, landmark) {
 		}, 2000);
 	}
 	else if (landmark == "Independence Rock") {
-		console.log("Position: ", position);
-		ctx.drawImage(img, 175, 35, 35, 23, position, 70, 75, 45);
+		ctx.drawImage(img, 175, 35, 35, 23, position, 70, 90, 45);
 
 		setTimeout(function() {
 			ctx.fillStyle = "black";
@@ -169,7 +157,6 @@ function animateLandmark(distance, pace, landmark) {
 		}, 2000);
 	}
 	else if (landmark == "South Pass") {
-		console.log("Position: ", position);
 		ctx.drawImage(img, 215, 5, 50, 23, position, 70, 90, 45);
 
 		setTimeout(function() {
@@ -178,8 +165,7 @@ function animateLandmark(distance, pace, landmark) {
 		}, 2000);
 	}
 	else if (landmark == "Soda Springs") {
-		console.log("Position: ", position);
-		ctx.drawImage(img, 145, 58, 60, 20, position, 70, 75, 45);
+		ctx.drawImage(img, 145, 58, 60, 20, position, 70, 90, 45);
 
 		setTimeout(function() {
 			ctx.fillStyle = "black";
@@ -187,9 +173,7 @@ function animateLandmark(distance, pace, landmark) {
 		}, 2000);
 	}
 	else if (landmark == "Fort Hall") {
-		console.log("Position: ", position);
 		ctx.drawImage(img, 120, 150, 80, 20, position, 70, 90, 45);
-		//drawImage()
 
 		setTimeout(function() {
 			ctx.fillStyle = "black";
@@ -197,19 +181,15 @@ function animateLandmark(distance, pace, landmark) {
 		}, 2000);
 	}
 	else if (landmark == "Fort Boise") {
-		console.log("Position: ", position);
-		ctx.drawImage(img, 195, 125, 60, 20, position, 70, 75, 45);
-		//drawImage()
+		ctx.drawImage(img, 195, 125, 60, 20, position, 70, 90, 45);
 
 		setTimeout(function() {
 			ctx.fillStyle = "black";
 			ctx.fillRect(position, 70, 125, 45);
 		}, 2000);
 	}
-	if (landmark == "Blue Mountains") {
-		console.log("Position: ", position);
-		ctx.drawImage(img, 192, 110, 60, 15, position, 70, 75, 45);
-		//drawImage()
+	else if (landmark == "Blue Mountains") {
+		ctx.drawImage(img, 192, 110, 60, 15, position, 70, 90, 45);
 
 		setTimeout(function() {
 			ctx.fillStyle = "black";
@@ -217,9 +197,7 @@ function animateLandmark(distance, pace, landmark) {
 		}, 2000);
 	}
 	else if (landmark == "The Dalles") {
-		console.log("Position: ", position);
 		ctx.drawImage(img, 145, 85, 120, 25, position, 70, 90, 45);
-		//drawImage()
 
 		setTimeout(function() {
 			ctx.fillStyle = "black";
@@ -227,24 +205,93 @@ function animateLandmark(distance, pace, landmark) {
 		}, 2000);
 	}
 	else if (landmark == "Fort Bridger") {
-		console.log("Position: ", position);
-		ctx.drawImage(img, 195, 150, 60, 20, position, 70, 75, 45);
-		//drawImage()
+		ctx.drawImage(img, 195, 150, 60, 20, position, 70, 90, 45);
 
 		setTimeout(function() {
 			ctx.fillStyle = "black";
 			ctx.fillRect(position, 70, 90, 45);
 		}, 2000);
 	}
-	if (landmark == "Fort Walla Walla") {
-		console.log("Position: ", position);
+	else if (landmark == "Fort Walla Walla") {
 		ctx.drawImage(img, 140, 125, 63, 20, position, 70, 90, 45);
-		//drawImage()
 
 		setTimeout(function() {
 			ctx.fillStyle = "black";
 			ctx.fillRect(position, 70, 90, 45);
 		}, 2000);
+	}
+	else if (landmark == "Barlow Toll Road") {
+		ctx.drawImage(img, 140, 125, 63, 20, position, 70, 90, 45);
+
+		setTimeout(function() {
+			ctx.fillStyle = "black";
+			ctx.fillRect(position, 70, 90, 45);
+		}, 2000);
+	}
+}
+
+// Animate the river crossing based on the bool 'result'
+function crossRiver(method, result) {
+	var c = document.getElementById("river");
+	var ctx = c.getContext("2d"); 
+	var img = document.getElementById("location");
+
+	c.height = 430;
+	c.width = 625;
+	ctx.fillStyle = "black";
+	ctx.fillRect(0, 0, c.width, c.height);
+
+	var h = c.height;
+	var w = c.width;
+
+	// Display the river canvas
+	$("#river").show();
+
+	// hide images
+	$("#myCanvas").hide();
+	$("#data").hide();
+	$("#info").hide();
+	$("#wagon").hide();
+	$("#location").hide();
+
+	
+	ctx.fillStyle = "#2222ff";
+	ctx.fillRect(0, 0, w, h)
+	ctx.fillStyle = "tan";
+	ctx.fillRect(0, 0, w, h/8);
+	ctx.fillRect(0, h - h/8, w, h)
+
+	if (method == "caulk") {
+		ctx.drawImage(img, 270, 2, 73, 28, w/2 - 25, h/2 - 14, 80, 40);	
+		inc = 91;
+	}
+	else if (method == "ford") {
+		ctx.drawImage(img, 270, 30, 73, 28, w/2 - 25, h/2 - 14, 80, 40);
+		inc = 63;
+	}
+	else if (method == "ferry") {
+		ctx.drawImage(img, 270, 58, 73, 35, w/2 - 25, h/2 - 14, 80, 40);
+		inc = 35;
+	}
+
+	if (!result) {
+		const interval = 2000;
+		const interval2 = 2000;
+		var times_run = 0;
+		tID2 = setInterval ( () => {
+			ctx.drawImage(img, 270, 93, 73, 42, w/2 - 25, h/2 - 14, 80, 40);
+			
+			tID3 = setInterval ( () => {
+				$("#river").hide();
+				$("#myCanvas").show();
+				$("#data").show();
+				$("#info").show();
+				$("#wagon").show();
+				$("#location").show();
+				clearInterval(tID3)
+			}, interval2 );
+			clearInterval(tID2);
+		} ,interval ); //end of setInterval
 	}
 }
 

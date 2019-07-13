@@ -15,16 +15,20 @@
 			const OXEN = 20;
 			const CLOTHING = 10;
 			const PART = 10;
-			const AMMO = .40;
+			const AMMO = 8;
 			const FOOD = .2;
+			var job = ""
 			var travID;  //This cannot be cleaned up.  Variable scoping is critical to event handling
 			var weather = "clear";  //Default weather
-			var caravan = new Caravan(1, "Banker");  //Similarly, this needs to be kept here for scoping.
+			var caravan = new Caravan(1);  //Similarly, this needs to be kept here for scoping.
+			var item_being_bought = 0;
+			var seq_c = 0; //Variable used to track where the game is in a sequence of frames, e.g. the intro.
 			//Everything in this area is for testing purposes and should be cleaned, eventually.
 			// Draw the animated canvas
 			drawCanvas(caravan.location);
 			loadData(weather);  
 			caravan.makeMember("Potato");
+			loadRations();
 			console.log(caravan.members);
 			console.log(caravan.day);
 			caravan.goFishing();
@@ -36,17 +40,31 @@
 			console.log(caravan.members[0].isAlive());
 			console.log("Living check", caravan.checkForDead());
 			caravan.pace = 1;
+			cross = false;
 			//Function to make oxen walk and stuff happen while traveling.
 			function travel(){
 				//Repeat an arbitrary number of times...
 				travID = setInterval ( () => {
-					loadInteract(getWeather());  
-					if (caravan.checkForDead() == -1) {
+					loadInteract(getWeather()); 
+					dead = caravan.checkForDead()
+					
+					if (dead == -1) { //game over
 						console.log("Here Lies Potato");
 						clearInterval(travID);
-						drawGrave("Potato");
 						return -1;
+						drawGrave(dead);		// event(All People are dead);
 					}
+
+					/* When you need to cross a river
+					if (cross) {
+						console.log("Crossing River");
+						clearInterval(travID);
+						crossRiver("ford", false);				// (method, result)
+						cross = false;
+						drawCanvas(caravan.location, getWeather);
+					}
+					*/
+					
 					caravan.getEvent();  //critical
 					console.log("Rolling along", caravan.distance);
 					console.log("Living check", caravan.checkForDead());
@@ -91,39 +109,108 @@
 			//Function to handle buying things at forts.  Pass it the item number and quantity and
 			//it will do the rest
 			function buyThings(item, number){
+				console.log("Buying Things:", item, number)
 				var fort_cost = 1;
 				var item_cost = 0;
 				if(caravan.fort){
 					fort_cost += (caravan.fort - 1) / 4; 
 				}
-				if(item * number * fort_cost > caravan.money){
+
+				if(item == 1){
+					item_cost = OXEN;
+					if(caravan.oxen + number > 20){
+						return -1;
+					}
+				} else if(item == 2) {
+					item_cost = CLOTHING;
+				} else if(item == 3) {
+					item_cost = AMMO;
+				} else if(item == 4) {
+					item_cost = PART;
+				} else if(item == 5) {
+					item_cost = PART;
+				} else if(item == 6) {
+					item_cost = PART;
+				} else if(item == 7) {
+					item_cost = FOOD;
+					if(caravan.food + number > 2000){
+						return -1;
+					}
+				}
+
+				if(item_cost * number * fort_cost > caravan.money){
 					return false;
 				}
+
+				caravan.money -= item_cost * number * fort_cost;
+
 				if(item == 1){
 					caravan.oxen += number;
-					item_cost = OXEN;
 				} else if(item == 2) {
-					caravan.clothing += number;
-					item_cost = CLOTHING;
-				} else if(item == 2) {
+					caravan.clothes += number;
+				} else if(item == 3) {
 					caravan.ammo += number * 20;
-					item_cost = AMMO;
-				} else if(item == 2) {
+				} else if(item == 4) {
 					caravan.wheel += number;
-					item_cost = PART;
-				} else if(item == 2) {
+				} else if(item == 5) {
 					caravan.tongue += number;
-					item_cost = PART;
-				} else if(item == 2) {
+				} else if(item == 6) {
 					caravan.axle += number;
-					item_cost = PART;
-				} else if(item == 2) {
+				} else if(item == 7) {
 					caravan.food += number;
-					item_cost = FOOD;
 				}
-				caravan.money -= item_cost * number * fort_cost;
+
 				return true;
 			}
+
+			function getCost(item){
+				if(item == 1){
+					return OXEN * (1 + (caravan.fort - 1) / 4);
+				} else if(item == 2) {
+					return CLOTHING * (1 + (caravan.fort - 1) / 4);
+				} else if(item == 3) {
+					return AMMO * (1 + (caravan.fort - 1) / 4);
+				} else if(item == 4) {
+					return PART * (1 + (caravan.fort - 1) / 4);
+				} else if(item == 5) {
+					return PART * (1 + (caravan.fort - 1) / 4);
+				} else if(item == 6) {
+					return PART * (1 + (caravan.fort - 1) / 4);
+				} else if(item == 7) {
+					return FOOD * (1 + (caravan.fort - 1) / 4);
+				}
+			}
+
+			//Function to dynamically load text into store frame.
+			function loadStore(){
+				var str = "You may buy:<br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. Oxen<br>" +
+					"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. Clothing<br>" +
+					"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3. Ammunition<br>" +
+					"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4. Wagon wheels<br>" +
+					"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5. Wagon axles<br>" +
+					"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6. Wagon tongues<br>" +
+					"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7. Food<br>" +
+					"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8. Leave store";
+				if(caravan.fort == 1){
+					str += "<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;9. Advice";
+				}
+				$('.frame-store').find('#items').html(str)
+
+				$('.frame-store').find('#costs').html(
+				getCost(1).toFixed(2) + "<br>" +
+				getCost(2).toFixed(2) + "<br>" +
+				getCost(3).toFixed(2) + "<br>" +
+				getCost(4).toFixed(2) + "<br>" +
+				getCost(5).toFixed(2) + "<br>" +
+				getCost(6).toFixed(2) + "<br>" +
+				getCost(7).toFixed(2) + "<br>"
+				);
+
+				$('.frame-store').find('#money').html(
+					"You have $" + caravan.money.toFixed(2) + " to spend.<br>Which number?" 
+				);
+			}
+
 			//Translate the date from number to a date.
 			function getDate(){
 				if(caravan.day > 273) {
@@ -196,7 +283,34 @@
 					"" + getDate() + "<br>" + weather + "<br>" + caravan.partyHealth() + "<br>" + caravan.food + "<br>" + (caravan.target_distance - caravan.distance) + "<br>" + caravan.distance
 				);
 			}
-			//This function is going to get massive, I think.  
+	
+			function jobAndTimeSwap(){
+				$('.frame-choice').hide();
+				$('.frame-names').show();
+				$('.frame-choice').find('#job').hide();
+				$('.frame-choice').find('#time').show();
+			}
+
+			function loadPace(){
+				$('.frame-pace').find('#top').html(
+					"Change pace<br>(currently " + getPace() + ")"
+				);
+			}
+			
+			function loadRations(){
+				$('.frame-rations').find('#top').html(
+					"Change food rations<br>(currently " + getRations() + ")"
+				);
+			}
+		
+			function loadSupplies(){
+				$('.frame-supplies').find('#quantities').html(
+					caravan.oxen + "<br>" + caravan.clothes + "<br>" + caravan.ammo + "<br>" + caravan.wheels + "<br>" + caravan.axles + "<br>" +
+					caravan.tongues + "<br>" + caravan.food + "<br>$" + caravan.money.toFixed(2)
+				);
+			}
+
+			//In an ideal world, this wouldn't.  I hope it doesn't break.
 			//Handles key press events.
 			$(document).keydown(function(){
 				key_code = event.keyCode;
@@ -213,23 +327,98 @@
 						$('.frame-interact').show();
 					}
 				}
+				//Handle interactions when pausing during the game.
 				else if(activeFrame == "frame frame-interact") {
-					if(key_code==32) {
-						clearInterval(travID); //This prevents warp speed.
-						$('.frame-travel').show();
-						$('.frame-interact').hide();
-						travel();
-					//If the key is 1-8, do the thing.
-					} else if (key_code >= 49 && key_code <= 55){
-
+					if (key_code >= 49 && key_code <= 56){
+						if(seq_c == 1){
+							$('.frame-interact').find('#rest_res').html(event.key);
+							seq_c = 2;
+						} else if (seq_c == 0){
+							$('.frame-interact').find('.response').html(event.key);
+						}
 					}//If the key is 9, this needs to be validated.
-					else if(key_code == 57){
-
+					else if(key_code == 57 && caravan.fort){
+						$('.frame-interact').find('.response').html(event.key);
 					} //If the user has already provided an input, process it...
 					else if(key_code == 13){
-
+						var num = $('.frame-interact').find('.response').html();
+						if (seq_c == 2){
+							seq_c = 0;
+							if 	($('.frame-interact').find('#rest_res').html() != 0){
+								for(var i = 1; i <= $('.frame-interact').find('#rest_res').html(); i++){
+									caravan.rest(i);
+									getWeather();
+									loadInteract(weather);
+									dead = caravan.checkForDead();
+									if(dead == -1){
+										//game over
+									}
+									else if (dead){
+										drawGrave(dead);
+									}
+								}
+							}
+							$('.frame-interact').find('#rest_res').html("")
+							$('.frame-interact').find('.response').html("")
+							$('.frame-interact').find('#rest').hide();
+						} else if (seq_c == 3){
+							seq_c = 0;
+							$('.frame-interact').find('#alert').hide();
+						}
+						else if(num == 1){
+							seq_c = 0;
+							clearInterval(travID); //This prevents warp speed.
+							$('.frame-travel').show();
+							$('.frame-interact').hide();
+							travel();
+						} else if(num == 2){
+							seq_c = 0;
+							loadSupplies();
+							$('.frame-interact').find('.response').html();
+							$('.frame-interact').hide();
+							$('.frame-supplies').show();
+						} else if(num == 4){
+							seq_c = 0;
+							loadPace();
+							$('.frame-interact').find('.response').html();
+							$('.frame-interact').hide();
+							$('.frame-pace').show();
+						} else if(num == 5){
+							seq_c = 0;
+							loadRations();
+							$('.frame-interact').find('.response').html();
+							$('.frame-interact').hide();
+							$('.frame-rations').show();
+						} else if(num == 6){
+							$('.frame-interact').find('#rest').show();
+							seq_c = 1;
+						} else if(num == 8 && !caravan.fort){
+							fish = caravan.goFishing();
+							$('.frame-interact').find('.response').html("");
+							$('.frame-interact').find('#alert').html(
+								"You caught " + fish + " pounds of fish."
+							);
+							$('.frame-interact').find('#alert').show();
+							loadInteract(weather);
+							seq_c = 3;
+						} else if(num == 9){
+							seq_c = 0;
+							$('.frame-interact').find('.response').html();
+							$('.frame-interact').hide();
+							$('.frame-store').show();
+						}
 					}
 				}
+				//Handle interactions on the hall of fame page.
+				else if(activeFrame == "frame frame-hall"){
+					//If the game is over, let them enter letters.
+					if(0){}
+					else if(key_code==32){
+						$('.frame-hall').hide();
+						$('.frame-intro').show();
+					}
+				}
+				//Handle interactions on the front page.
 				else if(activeFrame == "frame frame-intro"){
 					if(key_code >= 49 && key_code <= 51){
 						$('.frame-intro').find('#response').html(event.key);
@@ -237,24 +426,194 @@
 					else if(key_code == 13){
 						var cur = $('.frame-intro').find('#response').html();
 						if(cur == 1){
-							$('.frame-travel').show();
+							$('.frame-choice').show();
 							$('.frame-intro').hide();
-							travel();
 						} else if (cur == 2){
+							$('.frame-intro').find('#response').html(" ");
 							$.get( "getTen.php", function(data){
 								pairs = data.split("\n");
-								pairs.forEach(function(element){
-									player = element.split(',');
-									$('.frame-hall').find('#players').append(player[0] + "     " + player[1]);
-								});
+								for(var i = 0; i < 10; i++){
+									player = pairs[i].split(',');
+									$('.frame-hall').find('#players').append(player[0] + "<br>");
+									$('.frame-hall').find('#scores').append(player[1] + "<br>");
+								}
 								console.log(pairs);
 								$('.frame-hall').show();
 								$('.frame-intro').hide();
 							});
 						}
 					}
-				}	
-
+				}
+				//Multi purpose frame for the beginning of the game
+				else if(activeFrame == "frame frame-choice"){
+					if(key_code >= 49 && key_code <= 51){
+						$('.frame-choice').find('#choice_res').html(event.key);
+					} else if (job != "" && key_code >= 52 && key_code <= 54){
+						$('.frame-choice').find('#choice_res').html(event.key);
+					}
+					else if(key_code == 13 && job == ""){
+						var cur = $('.frame-choice').find('#choice_res').html();
+						if (cur == 1){
+							job = "Banker";
+							jobAndTimeSwap();
+						} else if (cur == 2){
+							job = "Carpenter";
+							jobAndTimeSwap();
+						} else if (cur == 3){
+							job = "Farmer";
+							jobAndTimeSwap();
+						}
+						var cur = $('.frame-choice').find('#choice_res').html(" ");
+					} else if(key_code == 13){
+						var cur = $('.frame-choice').find('#choice_res').html();
+						if (cur == 1){
+							caravan = new Caravan (1,job);
+							$('.frame-choice').hide();
+							loadStore();
+							$('.frame-store').show();
+						} else if (cur == 2){
+							caravan = new Caravan (31,job);
+							$('.frame-choice').hide();
+							loadStore();
+							$('.frame-store').show();
+						} else if (cur == 3){
+							caravan = new Caravan (62,job);
+							$('.frame-choice').hide();
+							loadStore();
+							$('.frame-store').show();
+						} else if (cur == 3){
+							caravan = new Caravan (92,job);
+							$('.frame-choice').hide();
+							loadStore();
+							$('.frame-store').show();
+						} else if (cur == 3){
+							caravan = new Caravan (123,job);
+							$('.frame-choice').hide();
+							loadStore();
+							$('.frame-store').show();
+						}
+						var cur = $('.frame-choice').find('#choice_res').html(" ");
+					}
+				}
+				//Handle buying things from the store.
+				else if (activeFrame == "frame frame-store"){
+					if(seq_c == 0 && key_code >= 49 && key_code <= 56){
+						$('.frame-store').find('#store-choice').html(event.key);
+					}
+					else if(seq_c == 0 && key_code == 13) {
+						if($('.frame-store').find('#store-choice').html() == 8){
+							item_being_bought = 0;
+							$('.frame-store').find('#store-choice').html("");
+							$('.frame-store').hide();
+							$('.frame-interact').show();
+						} else {
+							item_being_bought = $('.frame-store').find('#store-choice').html()
+							console.log("Item", item_being_bought);
+							$('.frame-store').find('#s_num').show();
+							seq_c = 1;
+						}
+					} else if (key_code >= 48 && key_code <= 57){
+						$('.frame-store').find('#store-choice2').append(event.key);
+					} else if (key_code == 13){
+						buyThings(item_being_bought, $('.frame-store').find('#store-choice2').html());
+						$('.frame-store').find('#store-choice').html("");
+						$('.frame-store').find('#store-choice2').html("");
+						$('.frame-store').find('#s_num').hide();
+						loadStore();
+						seq_c = 0;
+					}
+				}
+				//Manage naming the party
+				else if (activeFrame == "frame frame-names") {
+					if(seq_c < 1 && key_code >= 65 && key_code <=90){
+						if($('.frame-names').find('#names_res1').html().length < 30){
+							$('.frame-names').find('#names_res1').append(event.key);
+							seq_c = .5;
+						}
+					} else if(seq_c == .5 && key_code == 13){
+						seq_c = 1;
+					} else 	if(seq_c < 2 && key_code >= 65 && key_code <=90){
+						if($('.frame-names').find('#names_res2').html().length < 30){
+							$('.frame-names').find('#names_res2').append(event.key);
+							seq_c = 1.5;
+						}
+					} else if(seq_c == 1.5 && key_code == 13){
+						seq_c = 2;
+					} else 	if(seq_c < 3 && key_code >= 65 && key_code <=90){
+						if($('.frame-names').find('#names_res3').html().length < 30){
+							$('.frame-names').find('#names_res3').append(event.key);
+							seq_c = 2.5;
+						}
+					} else if(seq_c == 2.5 && key_code == 13){
+						seq_c = 3;
+					} else 	if(seq_c < 4 && key_code >= 65 && key_code <=90){
+						if($('.frame-names').find('#names_res4').html().length < 30){
+							$('.frame-names').find('#names_res4').append(event.key);
+							seq_c = 3.5;
+						}
+					} else if(seq_c == 3.5 && key_code == 13){
+						seq_c = 4;
+					} else if(seq_c < 5 && key_code >= 65 && key_code <=90){
+						if($('.frame-names').find('#names_res5').html().length < 30){
+							$('.frame-names').find('#names_res5').append(event.key);
+							seq_c = 4.5;
+						}
+					} else if(seq_c == 4.5 && key_code == 13){
+						seq_c = 5;
+						$('.frame-names').find('#confirm').show();
+					} else if(seq_c < 6 && (key_code == 78 || key_code ==89)) {
+						seq_c = 5.5;
+						$('.frame-names').find('#names_res6').html(event.key);
+					} else if(seq_c == 5.5 && key_code == 13){
+						if($('.frame-names').find('#names_res6').html().toLowerCase() == "n"){
+							$('.frame-names').find('#names_res1').html("");
+							$('.frame-names').find('#names_res2').html("");
+							$('.frame-names').find('#names_res3').html("");
+							$('.frame-names').find('#names_res4').html("");
+							$('.frame-names').find('#names_res5').html("");
+							$('.frame-names').find('#names_res6').html("");
+							seq_c = 0;
+							$('.frame-names').find('#confirm').hide();
+						} else{
+							caravan.makeMember($('.frame-names').find('#names_res1').html());
+							caravan.makeMember($('.frame-names').find('#names_res2').html());
+							caravan.makeMember($('.frame-names').find('#names_res3').html());
+							caravan.makeMember($('.frame-names').find('#names_res4').html());
+							caravan.makeMember($('.frame-names').find('#names_res5').html());
+							$('.frame-names').hide();
+							$('.frame-choice').show();
+							seq_c = 0;
+						}
+					}
+				//Changing pace.
+				} else if(activeFrame == "frame frame-pace"){
+					if(key_code >= 49 && key_code <= 51){
+						$('.frame-pace').find('#pace-choice').html(event.key);
+					} else if(key_code == 13){
+						caravan.pace = $('.frame-pace').find('#pace-choice').html()/ 2 + 0.5;
+						$('.frame-pace').hide();
+						$('.frame-interact').show();
+						$('.frame-pace').find('#pace-choice').html("")
+					}
+				}
+				//Changing rations.
+				else if(activeFrame == "frame frame-rations"){
+					if(key_code >= 49 && key_code <= 51){
+						$('.frame-rations').find('#rations-choice').html(event.key);
+					} else if(key_code == 13){
+						caravan.rations = 4 - $('.frame-rations').find('#rations-choice').html();
+						$('.frame-rations').hide();
+						$('.frame-interact').show();
+						$('.frame-rations').find('#rations-choice').html("")
+					}
+				}
+				//Displaying supplies.
+				else if(activeFrame == "frame frame-supplies"){
+					if(key_code == 32){
+						$('.frame-supplies').hide();
+						$('.frame-interact').show();
+					}
+				}
 			});
 		});
 	</script>
@@ -262,6 +621,10 @@
 	<div class="frame frame-travel" style="display: none;">
 		<img id="wagon" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
 		<img id="location" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
+		<canvas id="river"></canvas>
+		<script>
+			$("#river").hide();
+		</script>
 		<canvas id="myCanvas" width="600" height="190" style="border:0px solid black;"></canvas>
 		<p id="info" class="size_up" style="font-family:georgia">
 				Press enter to size up the situation.
@@ -277,7 +640,7 @@
 			
 		</p></div>
 	</div>
-	<div class="frame frame-interact" style="display: none;">
+	<div class="frame frame-interact" style="font-family:georgia;display:none;">
 		<p class="header" style="font-family:georgia">
 		Independence<br>
 		Date<br>
@@ -303,15 +666,41 @@
 		</p>
 		<p class="response" style="font-family:georgia">
 		</p>
+		<div id="alert" style="font-family:georgia;display:none;">
+		</div>
+		<p id="rest" style="font-family:georgia;display:none;">How many days would you like to rest?
+			<p id="rest_res"></p>
+		</p>
 	</div>
 	<div class="frame frame-image" style="display: none;">
 	</div>
-	<div class="frame frame-text" style="display: none;">
+	<div class="frame frame-choice" style="display: none;">
+		<p id="job" style="font-family:georgia">
+			Many kinds of people made the trip to Oregon <br><br>
+
+			&nbsp;&nbsp;You may:<br><br>
+		
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. Be a banker from Boston. <br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. Be a carpenter from Ohio. <br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3. Be a farmer from Illinois.
+		</p>
+		<p id="choice_choice" style="font-family:georgia">What is your choice?</p>
+		<p id="time" style="font-family:georgia;display:none;"> It is 1848. Your jumping off place for Oregon is Independence, Missouri.  You must decide which month to leave Independence. <br>
+			<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. March<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. April<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3. May<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4. June<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5. July
+		</p>
+		<p id="choice_res" style="font-family:georgia"></p>
 	</div>
 	<div class="frame frame-hall" style="display:none;">
-		<p id="columns" style="font-family:georgia">
+		<p id="columns" style="font-family:georgia"><u>Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Scores</u>
 		</p>
 		<p id="players" style="font-family:georgia">
+		</p>
+		<p id="scores" style="font-family:georgia">
 		</p>
 	</div>
 	<div class="frame frame-intro">
@@ -328,5 +717,91 @@
 		</p>
 		<p id="response" style="font-family:georgia"></p>
 	</div>
+	<div class="frame frame-store" style="font-family:georgia;display:none;">
+		<p id="items">
+		</p>
+		<p id="costs">
+		</p>
+		<p id="fluff">
+			per ox<br>
+			per set<br>
+			per box<br>
+			per wheel<br>
+			per axle<br>
+			per tongue<br>
+			per pound<br>
+		</p>
+		<p id="money">
+		</p>
+		<p id="store-choice">
+		</p>
+		<p id="s_num" style="display:none;">
+			How many?
+		</p>
+		<p id="store-choice2">
+		</p>
+	</div>
+	<div class="frame frame-names" style="font-family:georgia;display:none;">
+		<p id="question">
+		What are the names of the members of your party?
+		</p>
+		<p id="members">
+			&nbsp;1. <br>
+			&nbsp;2. <br> 
+			&nbsp;3. <br> 
+			&nbsp;4. <br> 
+			&nbsp;5. <br>
+		</p>
+		<p id="confirm" style="display:none;">&nbsp;&nbsp;&nbsp;&nbsp;Are these the names you want?</p>
+		<p id="names_res1">
+		</p>
+		<p id="names_res2">
+		</p>
+		<p id="names_res3">
+		</p>
+		<p id="names_res4">
+		</p>
+		<p id="names_res5">
+		</p>
+		<p id="names_res6">
+		</p>
+	</div>
+	<div class="frame frame-supplies" style="font-family:georgia;display:none;">
+		<p id="top">
+			Your supplies
+		</p>
+		<p id="stuff">
+			oxen<br>sets of clothing<br>bullets<br>wagon wheels<br>wagon axles<br>wagon tongues<br>pounds of food<br>money left
+		</p>
+		<p id="quantities">
+		</p>
+	</div>
+	<div class="frame frame-pace" style="font-family:georgia;display:none;">
+		<p id="top">
+		</p>
+		<p id="body">
+			The pace at which you travel can change. Your choices are: <br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. a steady pace<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. a strenuous pace<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3. a grueling pace<br><br>
+			What is your choice?
+		</p>
+		<p id="pace-choice" > ttt
+		</p>
+	</div>
+	<div class="frame frame-rations" style="font-family:georgia;display:none;">
+		<p id="top">
+		</p>
+		<p id="body">
+			The amount of food that the people in your party eat each day cna change.  The amounts are: <br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. filling - meals are large and generous<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. meager - meals are small and adequate<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3. bare bones - meals are small and everyone stays hungry<br><br>
+			What is your choice?
+		</p>
+		<p id="rations-choice" > ttt
+		</p>
+	</div>
+
 </body>
 </html>
