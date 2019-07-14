@@ -275,25 +275,25 @@
 					value += 10;
 				}
 				if(value < 2) {
-					this.weather = "cold";
+					return weather = "cold";
 				}
 				else if(value < 32){
-					this.weather = "cool";
+					return weather = "cool";
 				}
 				else if(value < 46){
-					this.weather = "rainy";
+					return weather = "rainy";
 				}
 				else if(value < 49){
-					this.weather = "very rainy";
+					return weather = "very rainy";
 				}
 				else if(value < 71){
-					this.weather = "warm";
+					return weather = "warm";
 				}
 				else if(value < 97){
-					this.weather = "hot";
+					return weather = "hot";
 				}
 				else{
-					this.weather = "very hot";
+					return weather = "very hot";
 				}
 			}
 
