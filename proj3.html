@@ -434,6 +434,7 @@
 							$('.frame-travel').hide();
 							$('.frame-interact').show();
 						}
+					//If the landmark prompt is up...
 					} else if($('#landmark:visible').length){
 						if(key_code == 89){
 							$('#landmark_res').html("y");
@@ -459,6 +460,7 @@
 								$('#landmark_res').html("");
 								$('#landmark').hide();
 								$('.frame-travel').hide();
+								showLandmark(caravan.hitLandmark);
 								$('.frame-landmark').show();
 							}
 						} 
@@ -519,12 +521,18 @@
 						}
 						else if(num == 1){
 							seq_c = 0;
-							loadData(weather);
-							clearInterval(travID); //This prevents warp speed.
-							$('.frame-travel').show();
-							$('.frame-interact').hide();
 							$('.frame-interact').find('.response').html("");
-							travel();
+							if(isRiver()){
+								$('.frame-interact').hide();
+								loadRiverDesc();
+								$('.frame-river').show();
+							} else{ 
+								loadData(weather);
+								clearInterval(travID); //This prevents warp speed.
+								$('.frame-travel').show();
+								$('.frame-interact').hide();
+								travel(); 
+							}
 						} else if(num == 2){
 							seq_c = 0;
 							loadSupplies();
@@ -882,6 +890,11 @@
 							travel();
 						}
 					}
+				} else if(activeFrame == 'frame frame-landmark'){
+					if(key_code == 13){
+						$('.frame-landmark').hide();
+						$('.frame-interact').show();
+					}
 				}
 			});
 		});
@@ -890,6 +903,7 @@
 	<div class="frame frame-travel" style="display: none;">
 		<img id="wagon" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
 		<img id="location" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
+		<img id="landmarks" height="0px" width="0px" src="./oregon_trail_sprites/ot_locations.gif"></img>
 		<canvas id="myCanvas" width="600" height="190" style="border:0px solid black;"></canvas>
 		<p id="info" class="size_up" style="font-family:georgia">
 				Press enter to size up the situation.
@@ -1084,6 +1098,9 @@
 		<p id="description" style="display:none;"></p>
 		<p id="choice_text" style="display:none;"></p>
 		<p id="river_res"></p>
+	</div>
+	<div class="frame frame-landmark">
+		<canvas id="places" height="415px" width="615px"></canvas>
 	</div>
 </body>
 </html>
