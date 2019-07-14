@@ -71,6 +71,12 @@
 					loadData(getWeather());  //critical
 
 					//Handle landmarks
+					landmark = caravan.hitLandmark;
+					if(landmark){
+						//handle landmark
+					}
+
+					//Handle splits
 					if(caravan.nextLandmark == "flag1"){ //testing
 						caravan.goToGreenRiver();
 					}
@@ -88,21 +94,25 @@
 						}
 					}
 
-					//If there was an event...
-					if(eventID){
-						//clear it.
-						eventID = "";
-						//If the event did not lock the travel, terminate travel.
-						if(!caravan.eventLocked){
-							clearInterval(travID);
-						}
-					//If the travel was locked for 1 day at the start of the function,
-					//the event has just finished and travel() needs to stop.
-					} else if(isLocked == 1){
-						clearInterval(travID);						
-					}
+					cleanEvents(isLocked)
 					
 				}, 2000); //every 2 seconds.
+			}
+
+			function cleanEvents(isLocked){
+				//If there was an event...
+				if(eventID){
+					//clear it.
+					eventID = "";
+					//If the event did not lock the travel, terminate travel.
+					if(!caravan.eventLocked){
+						clearInterval(travID);
+					}
+				//If the travel was locked for 1 day at the start of the function,
+				//the event has just finished and travel() needs to stop.
+				} else if(isLocked == 1){
+					clearInterval(travID);						
+				}
 			}
 
 			//Make an event pop-up.

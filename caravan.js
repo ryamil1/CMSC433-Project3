@@ -37,7 +37,7 @@ class Caravan {
 		var event = "";
 		if(!this.eventLocked){
 			var randID = Math.floor(Math.random() * 100);
-			if(randID > 98){
+			if(randID > 70){
 				event = "Lost the trail. Lose " + 4 + " days.";
 				this.eventLocked = 4;
 			}
@@ -73,7 +73,7 @@ class Caravan {
 
 	setDistance(other = 0){
 		//If there aren't at least 4 oxen, move half speed.
-		eno_oxen = .5;
+		var eno_oxen = .5;
 		if(this.oxen > 3){
 			eno_oxen = 1
 		} else if (this.oxen == 0){
