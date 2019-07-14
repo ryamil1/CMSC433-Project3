@@ -72,13 +72,21 @@ class Caravan {
 	}
 
 	setDistance(other = 0){
+		//If there aren't at least 4 oxen, move half speed.
+		eno_oxen = .5;
+		if(this.oxen > 3){
+			eno_oxen = 1
+		} else if (this.oxen == 0){
+			//Don't move, need to provide user feedback.
+		}
+
 		if(this.location){
-			this.distance += 12 * this.pace + other;
+			this.distance += (12 * this.pace + other) * eno_oxen;
 			this.fort = 0;
 			this.hitLandmark = "";
 		}
 		else{
-			this.distance += 20 * this.pace + other;
+			this.distance += (20 * this.pace + other) * eno_oxen;
 			this.fort = 0;
 			this.hitLandmark = "";
 		}
