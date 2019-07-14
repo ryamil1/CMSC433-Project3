@@ -435,6 +435,7 @@
 						}
 						else if(num == 1){
 							seq_c = 0;
+							loadData(weather);
 							clearInterval(travID); //This prevents warp speed.
 							$('.frame-travel').show();
 							$('.frame-interact').hide();
@@ -677,7 +678,9 @@
 				} else if(activeFrame == "frame frame-pace"){
 					if(key_code >= 49 && key_code <= 51){
 						$('.frame-pace').find('#pace-choice').html(event.key);
-					} else if(key_code == 13){
+						seq_c = 1;
+					} else if(seq_c == 1 && key_code == 13){
+						seq_c = 0;
 						caravan.pace = $('.frame-pace').find('#pace-choice').html()/ 2 + 0.5;
 						$('.frame-pace').hide();
 						$('.frame-interact').show();
@@ -688,7 +691,9 @@
 				else if(activeFrame == "frame frame-rations"){
 					if(key_code >= 49 && key_code <= 51){
 						$('.frame-rations').find('#rations-choice').html(event.key);
-					} else if(key_code == 13){
+						seq_c = 1;
+					} else if(seq_c == 1 && key_code == 13){
+						seq_c = 0;
 						caravan.rations = 4 - $('.frame-rations').find('#rations-choice').html();
 						$('.frame-rations').hide();
 						$('.frame-interact').show();

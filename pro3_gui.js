@@ -43,8 +43,8 @@ function drawGrave(player) {
 	$("#data").hide();
 	$("#info").hide();
 	$("wagon").remove();
-	c.width = 625;
-	c.height = 430;
+	c.width = 615;
+	c.height = 402;
 	var ctx = c.getContext("2d");
 	ctx.fillStyle = "black";
 	ctx.fillRect(0, 0, c.width, c.height);

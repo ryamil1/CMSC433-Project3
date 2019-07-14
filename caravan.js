@@ -37,7 +37,7 @@ class Caravan {
 		var event = "";
 		if(!this.eventLocked){
 			var randID = Math.floor(Math.random() * 100);
-			if(randID > 70){
+			if(randID > 90){
 				event = "Lost the trail. Lose " + 4 + " days.";
 				this.eventLocked = 4;
 			}
