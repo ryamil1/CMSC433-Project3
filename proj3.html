@@ -25,6 +25,10 @@
 			var item_being_bought = 0;
 			var eventID = "";
 			var first;
+			var riverDeep = 0;
+			var riverWidth = 0;
+			var success = 0;
+			loadRiverDesc();
 			var seq_c = 0;//Variable used to track where the game is in a sequence of frames, e.g. the intro.
 			//Everything in this area is for testing purposes and should be cleaned, eventually.
 			// Draw the animated canvas
@@ -70,12 +74,6 @@
 					//Update the page
 					loadData(getWeather());  //critical
 
-					//Handle landmarks
-					landmark = caravan.hitLandmark;
-					if(landmark){
-						//handle landmark
-					}
-
 					//Handle splits
 					if(caravan.nextLandmark == "flag1"){ //testing
 						caravan.goToGreenRiver();
@@ -94,7 +92,15 @@
 						}
 					}
 
-					cleanEvents(isLocked)
+					//Handle landmarks
+					landmark = caravan.hitLandmark;
+					if(landmark){
+						handleLandmark(landmark, isLocked);
+					}
+
+					cleanEvents(isLocked);
+
+
 					
 				}, 2000); //every 2 seconds.
 			}
@@ -121,6 +127,13 @@
 				console.log(">>>", $('.frame:visible'), str);
 				$('.frame:visible').find('.event').html(str);
 				$('.frame:visible').find('.event').show();
+			}
+
+			function isRiver(){
+				if(caravan.hitLandmark == "Kansas River Crossing" || caravan.hitLandmark == "Big Blue River Crossing" || caravan.hitLandmark == "Green River" || caravan.hitLandmark == "Snake River Crossing"){
+					return true;
+				}
+				return false;
 			}
 
 			//Convert pace into words.
@@ -251,6 +264,18 @@
 				);
 			}
 
+			function handleLandmark(landmark, isLocked){
+				clearInterval(travID);
+				loadLandmark(landmark);
+				cleanEvents(isLocked);
+			}
+
+			function loadLandmark(landmark){
+				var str = "You are now at the " + landmark + ". Would you like to look around?<br>"
+				$('.frame-travel').find('#landmark').html(str);
+				$('.frame-travel').find('#landmark').show();
+			}
+
 			//Translate the date from number to a date.
 			function getDate(){
 				if(caravan.day > 273) {
@@ -351,6 +376,37 @@
 				);
 			}
 
+			function loadRiverDesc(){
+				$('#river_header').html(
+					caravan.hitLandmark + "<br>" + getDate()
+				).show();
+				riverDeep = Math.floor(Math.random() * 10)
+				riverWidth = Math.floor(Math.random() * 300)
+				$('.frame-river').find('#description').html(
+					"You must cross the river in order to continue.  The river at this point is " + riverWidth + " feet across and " + riverDeep + " feet deep in the middle."
+				).show();
+				
+			}
+
+			function loadRiverChoice(){
+				var str = 	"Weather: " + weather + "<br>" +
+							"River width: " + riverWidth + "<br>" +
+							"River depth: " + riverDeep + "<br>" +
+							"<br>You may:<br><br>1. attempt to ford the river<br>2. caulk the wagon and float it across";
+
+				if(caravan.hitLandmark == "Kansas River Crossing" || caravan.hitLandmark == "Green River"){
+					str += "<br>3. pay for a ferry ($5, may have to wait)";
+				} else if (caravan.hitLandmark == "Snake River Crossing"){
+					str += "<br>3. look for a Shoshone guide (trade 2 clothes)";
+				} else {
+					str += "<br>";
+				}
+
+				str += "<br><br>What is your choice?"
+
+				$('.frame-river').find('#choice_text').html(str).show();
+			}
+
 			function resetCaravan(){
 				car_mem = caravan.members;
 				caravan = new Caravan(caravan.day, caravan.job);
@@ -378,6 +434,34 @@
 							$('.frame-travel').hide();
 							$('.frame-interact').show();
 						}
+					} else if($('#landmark:visible').length){
+						if(key_code == 89){
+							$('#landmark_res').html("y");
+							seq_c = 1;
+						} else if (key_code == 78){
+							$('#landmark_res').html("n");
+							seq_c = 1
+						} else if (seq_c == 1 && key_code == 13){
+							if($('#landmark_res').html() == "n"){
+								seq_c = 0;
+								$('#landmark_res').html("");
+								$('#landmark').hide();
+								if(isRiver()){
+									$('.frame-travel').hide();
+									loadRiverDesc();
+									$('.frame-river').show();
+								} else {
+									clearInterval(travID);
+									travel();
+								}
+							} else if ($('#landmark_res').html() == "y"){
+								seq_c = 0;
+								$('#landmark_res').html("");
+								$('#landmark').hide();
+								$('.frame-travel').hide();
+								$('.frame-landmark').show();
+							}
+						} 
 					} else if(key_code==13) {
 						//If key is enter, stop the game.
 						clearInterval(travID);
@@ -575,10 +659,12 @@
 				else if (activeFrame == "frame frame-store"){
 					if(seq_c == 0 && key_code >= 49 && key_code <= 56){
 						$('.frame-store').find('#store-choice').html(event.key);
+						seq_c = .5;
 					}
-					else if(seq_c == 0 && key_code == 13) {
+					else if(seq_c == .5 && key_code == 13) {
 						if($('.frame-store').find('#store-choice').html() == 8){
 							if(caravan.fort == 1 && caravan.oxen > 1){
+								seq_c = 0;
 								item_being_bought = 0;
 								loadInteract(weather);
 								$('.frame-store').find('#store-choice').html("");
@@ -596,9 +682,10 @@
 							$('.frame-store').find('#s_num').show();
 							seq_c = 1;
 						}
-					} else if (seq_c == 1 && key_code >= 48 && key_code <= 57){
+					} else if ((seq_c == 1 || seq_c == 1.5) && key_code >= 48 && key_code <= 57){
 						$('.frame-store').find('#store-choice2').append(event.key);
-					} else if (key_code == 13){
+						seq_c = 1.5;
+					} else if (seq_c == 1.5 && key_code == 13){
 						buyThings(item_being_bought, $('.frame-store').find('#store-choice2').html());
 						$('.frame-store').find('#store-choice').html("");
 						$('.frame-store').find('#store-choice2').html("");
@@ -706,6 +793,95 @@
 						$('.frame-supplies').hide();
 						$('.frame-interact').show();
 					}
+				} else if(activeFrame == "frame frame-river"){
+					if($('#description:visible').length && key_code == 32){
+						$('#description:visible').hide();
+						loadRiverChoice();
+					} else if($('#choice_text:visible') && key_code >= 49 && key_code <= 51){
+						$('.frame-river').find('#river_res').html(event.key);
+						seq_c = 1;
+					} else if($('#choice_text:visible') && seq_c == 1 && key_code == 13){
+						var response = parseInt($('.frame-river').find('#river_res').html());
+						$('.frame-river').find('#river_res').html("");
+						seq_c = 0;
+						var suc_val = Math.floor(Math.random() * 100);
+						if(response == 1){
+							if(riverDeep > 3){
+								if(suc_val > 75){
+									success = true;
+								} else{
+									success = false;
+								}
+							} else {
+								if(suc_val > 75){
+									success = false;
+								} else{
+									success = true;
+								}
+							}
+							$('#river_header').hide();
+							$('#choice_text').hide();
+							$('#river').show();
+							crossRiver("ford", success);
+						} else if (response == 2){
+							if(riverDeep > 7){
+								if(suc_val > 80){
+									success = true;
+								} else{
+									success = false;
+								}
+							} else {
+								if(suc_val > 80){
+									success = false;
+								} else{
+									success = true;
+								}
+							}
+							$('#river_header').hide();
+							$('#choice_text').hide();
+							$('#river').show();
+							crossRiver("caulk", success);
+						} else if (response == 3){
+							if(caravan.hitLandmark == "Snake River Crossing"){
+								if(suv_val < 90){
+									success = true;
+								} else{
+									success = false;
+								}
+								if(caravan.clothes >= 2){
+									caravan.clothes -= 2;
+									$('#river_header').hide();
+									$('#choice_text').hide();
+									$('#river').show();
+									crossRiver("ferry", success);
+								}
+							} else if (caravan.hitLandmark == "Kansas River Crossing" || caravan.hitLandmark == "Green River"){
+								if(caravan.money >= 5){
+									caravan.money -= 5;
+									$('#river_header').hide();
+									$('#choice_text').hide();
+									$('#river').show();
+									crossRiver("ferry", success);
+								}
+							}
+						}
+					} else if('#river:visible' && key_code == 32){
+						$('#river').hide();
+						clearInterval(travID);
+						$('.frame-river').hide();
+						$('.frame-travel').show();
+						console.log(success);
+						if(!success){
+							var text = caravan.loseRandom();
+							if(text != ""){
+								makeEvent(text);
+							} else{
+								makeEvent("Nothing lost.");
+							}
+						} else{
+							travel();
+						}
+					}
 				}
 			});
 		});
@@ -729,7 +905,10 @@
 		<p class="data" style="font-family:georgia">
 		</p>
 		</div>
-		<p class="event" style="font-family:georgia;display: none;"></p>
+		<p id="landmark" style="font-family:georgia;display:none;">	
+			<p id="landmark_res"></p>
+		</p>
+		<p class="event" style="font-family:georgia;display:none;"></p>
 	</div>
 	<div class="frame frame-interact" style="font-family:georgia;display:none;">
 		<p class="header" style="font-family:georgia">
@@ -795,7 +974,7 @@
 		<p id="scores" style="font-family:georgia">
 		</p>
 	</div>
-	<div class="frame frame-intro">
+	<div class="frame frame-intro" style="">
 		<p class="title" style="font-family:georgia">
 			The Oregon Trail
 		</h1>
@@ -894,12 +1073,17 @@
 		<p id="rations-choice" > 
 		</p>
 	</div>
-	<img id="wagon" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
-	<img id="location" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
-	<!-- The canvas for the panning background -->
-	<canvas id="river" height="430px" width="625px">
-			Your browser does not support canvas. Please try again with a different browser.
-	</canvas>
-
+	<div class="frame frame-river" style="font-family:georgia;display:none;">
+		<img id="wagon" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
+		<img id="location" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
+		<!-- The canvas for the panning background -->
+		<canvas id="river" height="402px" width="615px" style="display:none;">
+				Your browser does not support canvas. Please try again with a different browser.
+		</canvas>
+		<p id="river_header" style="display:none;"></p>
+		<p id="description" style="display:none;"></p>
+		<p id="choice_text" style="display:none;"></p>
+		<p id="river_res"></p>
+	</div>
 </body>
 </html>

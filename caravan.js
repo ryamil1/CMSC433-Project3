@@ -36,12 +36,17 @@ class Caravan {
 	getEvent(){
 		var event = "";
 		if(!this.eventLocked){
+			this.hitLandmark = "";
+			var gotEvent = false;
 			var randID = Math.floor(Math.random() * 100);
 			if(randID > 90){
 				event = "Lost the trail. Lose " + 4 + " days.";
 				this.eventLocked = 4;
+				gotEvent = true;
 			}
-			this.setDistance();
+			if(!gotEvent){
+				this.setDistance();
+			}
 		//random to get event
 		//huge case statement
 		//each event controls the update of health and distance
@@ -325,5 +330,66 @@ class Caravan {
 		} else{
 			return "very poor"
 		}
+	}
+
+	loseRandom(){
+		var target = Math.floor(Math.random() * 6);
+		var ret_string = "";
+		if(target == 0){
+			value = Math.floor(Math.random() * this.oxen);
+			this.oxen -= value;
+			if (value){
+				ret_string += value + " oxen lost.<br>"
+			}
+		}else if(target == 1){
+			value = Math.floor(Math.random() * this.food);
+			this.food -= value;
+			if (value){
+				ret_string += value + " pounds of food lost.<br>"
+			}
+		}else if(target == 2){
+			value = Math.floor(Math.random() * this.ammo);
+			this.ammo -= value;
+			if (value){
+				ret_string += value + " ammo lost.<br>"
+			}
+		}else if(target == 3){
+			value = Math.floor(Math.random() * this.wheel);
+			this.wheel -= value;
+			if (value){
+				ret_string += value + " wheels lost.<br>"
+			}
+		}else if(target == 4){
+			value = Math.floor(Math.random() * this.tongue);
+			this.tongue -= value;
+			if (value){
+				ret_string += value + " tongues lost.<br>"
+			}
+		}else if(target == 5){
+			value = Math.floor(Math.random() * this.axle);
+			this.axle -= value;
+			if (value){
+				ret_string += value + " axles lost.<br>"
+			}
+		}else if(target == 6){
+			value = Math.floor(Math.random() * this.clothes);
+			this.clothes -= value;
+			if (value){
+				ret_string += value + " clothes lost.<br>"
+			}
+		}
+
+		var dead_pers = 0;
+		target = Math.floor(Math.random() * this.members.length);
+		value = Math.floor(Math.random() * 100);
+		if(value > 85){
+			ret_string += this.members[target].name + " has died."
+			dead_pers = target
+		}
+		if(dead_pers){
+			this.members.splice(target, 1);
+		}	
+
+		return ret_string;
 	}
 }
