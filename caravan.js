@@ -1,8 +1,9 @@
 class Caravan {
-	constructor(day, career) {
+	constructor(day, career = "Banker") {
 		this.day = day;
 		this.distance = 0;
 		this.target_distance = 102;
+		this.weather = "clear"; //getWeather; 
 		this.pace = 1;  //expecting ui to reach in to change this when appropriate
 		this.rations = 3; //expecting ui to reach in to change this when appropriate
 		this.starving = false; //managed in setFood
@@ -10,6 +11,16 @@ class Caravan {
 		this.nextLandmark = "Kansas River Crossing"; //needs the ui to reach in and change this based on player decisions
 		this.eventLocked = 0; //tracks days which need to tick for multi-day events
 		this.fort = 1;
+		this.hitLandmark = "";
+
+		if(career == "Banker"){
+			this.money = 1600;
+		} else if(career == "Carpenter") {
+			this.money = 800;
+		} else if(career == "Farmer"){
+			this.money = 400;
+		}
+
 
 		this.members = [];
 		this.oxen = 0;
@@ -19,35 +30,42 @@ class Caravan {
 		this.wheel = 0;
 		this.axle = 0;
 		this.clothes = 0;
-		this.money = 0;
 		this.job = career;
 	}
 
 	getEvent(){
+		var event = "";
+		if(!this.eventLocked){
+			var randID = Math.floor(Math.random() * 100);
+			if(randID > 98){
+				event = "Lost the trail. Lose " + 4 + " days.";
+				this.eventLocked = 4;
+			}
+			this.setDistance();
 		//random to get event
 		//huge case statement
 		//each event controls the update of health and distance
-		this.setDistance();
+		} else{
+			this.eventLocked -= 1;
+		} 
 		this.setFood();
 		var pass_rat = this.mapRationToHealth();
 		var pass_pace = this.mapPaceToHealth();
 		this.members.forEach(function(element){
 			element.setHealth(pass_rat, pass_pace);
-			console.log("Member check:", element.name, element.health)
 		});
 		this.day++;
+		return event;
+
 	}
 
 	setFood(){
 		var consumption = this.members.length * this.rations;
 		if(consumption > this.food){
-			console.log("Starving")
 			this.starving = true;
 			this.food = 0;
 		}
 		else {
-			console.log("Not starving.", this.starving);
-			console.log("food", this.food);
 			this.starving = false;
 			this.food -= consumption;
 		}
@@ -57,32 +75,38 @@ class Caravan {
 		if(this.location){
 			this.distance += 12 * this.pace + other;
 			this.fort = 0;
+			this.hitLandmark = "";
 		}
 		else{
 			this.distance += 20 * this.pace + other;
 			this.fort = 0;
+			this.hitLandmark = "";
 		}
 		
 		if(this.nextLandmark == "Kansas River Crossing" && this.distance >= this.target_distance) {
 			this.nextLandmark = "Big Blue River Crossing";
 			this.distance = this.target_distance;
 			this.target_distance += 83;
+			this.hitLandmark = "Kansas River Crossing";
 		}
 		else if(this.nextLandmark == "Big Blue River Crossing" && this.distance >= this.target_distance) {
 			this.nextLandmark = "Fort Kearney";
 			this.distance = this.target_distance;
 			this.target_distance += 119;
+			this.hitLandmark = "Big Blue River Crossing";
 		}
 		else if(this.nextLandmark == "Fort Kearney" && this.distance >= this.target_distance) {
 			this.nextLandmark = "Chimney Rock";
 			this.distance = this.target_distance;
 			this.target_distance += 250;
 			this.fort = 2;
+			this.hitLandmark = "Fort Kearney";
 		}
 		else if(this.nextLandmark == "Chimney Rock" && this.distance >= this.target_distance) {
 			this.nextLandmark = "Fort Laramie";
 			this.distance = this.target_distance;
 			this.target_distance += 86;
+			this.hitLandmark = "Chimney Rock";
 		}
 		else if(this.nextLandmark == "Fort Laramie" && this.distance >= this.target_distance) {
 			this.nextLandmark = "Independence Rock";
@@ -90,66 +114,79 @@ class Caravan {
 			this.target_distance += 190;
 			this.location = 1;
 			this.fort = 3;
+			this.hitLandmark = "Fort Laramie";
 		}
 		else if(this.nextLandmark == "Independence Rock" && this.distance >= this.target_distance) {
 			this.nextLandmark = "South Pass";
 			this.distance = this.target_distance;
 			this.target_distance += 102;
+			this.hitLandmark = "Independence Rock";
 		}
 		else if(this.nextLandmark == "South Pass" && this.distance >= this.target_distance) {
 			this.nextLandmark = "flag1";
 			this.distance = this.target_distance;
+			this.hitLandmark = "South Pass";
 		}
 		else if(this.nextLandmark == "Green River" && this.distance >= this.target_distance) {
 			this.nextLandmark = "Soda Springs";
 			this.distance = this.target_distance;
 			this.target_distance += 144;
+			this.hitLandmark = "Green River";
 		}
 		else if(this.nextLandmark == "Fort Bridger" && this.distance >= this.target_distance) {
 			this.nextLandmark = "Soda Springs";
 			this.distance = this.target_distance;
 			this.target_distance += 162;
 			this.fort = 4;
+			this.hitLandmark = "Fort Bridger";
 		}
 		else if(this.nextLandmark == "Soda Springs" && this.distance >= this.target_distance) {
 			this.nextLandmark = "Fort Hall";
 			this.distance = this.target_distance;
 			this.target_distance += 57;
+			this.hitLandmark = "Soda Springs";
 		}
 		else if(this.nextLandmark == "Fort Hall" && this.distance >= this.target_distance) {
 			this.nextLandmark = "Snake River Crossing";
 			this.distance = this.target_distance;
 			this.target_distance += 182;
 			this.fort = 5;
+			this.hitLandmark = "Fort Hall";
 		}
 		else if(this.nextLandmark == "Snake River Crossing" && this.distance >= this.target_distance) {
 			this.nextLandmark = "Fort Boise";
 			this.distance = this.target_distance;
 			this.target_distance += 114;
+			this.hitLandmark = "Snake River Crossing";
 		}
 		else if(this.nextLandmark == "Fort Boise" && this.distance >= this.target_distance) {
 			this.nextLandmark = "Blue Mountains";
 			this.distance = this.target_distance;
 			this.target_distance += 160;
 			this.fort = 6;
+			this.hitLandmark = "Fort Boise";
 		}
 		else if(this.nextLandmark == "Blue Mountains" && this.distance >= this.target_distance) {
 			this.nextLandmark = "flag2";
 			this.distance = this.target_distance;
+			this.hitLandmark = "Blue Mountains";
 		}
 		else if(this.nextLandmark == "Fort Walla Walla" && this.distance >= this.target_distance) {
 			this.nextLandmark = "The Dalles";
 			this.distance = this.target_distance;
 			this.target_distance += 120;
 			this.fort = 7;
+			this.hitLandmark = "Fort Walla Walla";
 		}
 		else if(this.nextLandmark == "The Dalles" && this.distance >= this.target_distance) {
 			this.nextLandmark = "flag3";
 			this.distance = this.target_distance;
+			this.hitLandmark = "The Dalles";
 		}
 		else if(this.nextLandmark == "Oregon" && this.distance >= this.target_distance) {
 			this.nextLandmark = "flag4";
 			this.distance = this.target_distance;
+			this.hitLandmark = "Oregon";
 		}
 	}
 
@@ -194,23 +231,22 @@ class Caravan {
 			}
 			element.setHealth(ration_val, 0, rest_val);
 		});
-		this.time += 1;
+		this.day += 1;
 		animateWagon(this.pace);
 	}
 
 	//Generate a random amount of food from 15-100, return the value gained.
 	goFishing(){
-		console.log("Going fishing.")
 		var fish = 15 + Math.floor(Math.random() * 85);
 		this.food += fish;
 		this.setFood();
-		this.time += 1;
+		this.day += 1;
 		return fish;
 	}
 
 	mapRationToHealth(){
 		if(this.starving){
-			return -3;
+			return -4;
 		}	
 
 		if(this.rations == 3){
@@ -257,6 +293,7 @@ class Caravan {
 			this.members.splice(re_index, 1);
 		}
 
+		console.log("Checking for dead:", r_val)
 		//If nobody died, this is false, else it is the name of the dead person.
 		return r_val;
 	}
