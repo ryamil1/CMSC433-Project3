@@ -173,19 +173,20 @@
 				caravan.money -= item_cost * number * fort_cost;
 
 				if(item == 1){
-					caravan.oxen += number;
+					console.log("Oxen:", caravan.oxen, "number:", number);
+					caravan.oxen += parseInt(number);
 				} else if(item == 2) {
-					caravan.clothes += number;
+					caravan.clothes += parseInt(number);
 				} else if(item == 3) {
-					caravan.ammo += number * 20;
+					caravan.ammo += parseInt(number) * 20;
 				} else if(item == 4) {
-					caravan.wheel += number;
+					caravan.wheel += parseInt(number);
 				} else if(item == 5) {
-					caravan.tongue += number;
+					caravan.tongue += parseInt(number);
 				} else if(item == 6) {
-					caravan.axle += number;
+					caravan.axle += parseInt(number);
 				} else if(item == 7) {
-					caravan.food += number;
+					caravan.food += parseInt(number);
 				}
 
 				return true;
@@ -335,9 +336,15 @@
 		
 			function loadSupplies(){
 				$('.frame-supplies').find('#quantities').html(
-					caravan.oxen + "<br>" + caravan.clothes + "<br>" + caravan.ammo + "<br>" + caravan.wheels + "<br>" + caravan.axles + "<br>" +
-					caravan.tongues + "<br>" + caravan.food + "<br>$" + caravan.money.toFixed(2)
+					caravan.oxen + "<br>" + caravan.clothes + "<br>" + caravan.ammo + "<br>" + caravan.wheel + "<br>" + caravan.axle + "<br>" +
+					caravan.tongue + "<br>" + caravan.food + "<br>$" + caravan.money.toFixed(2)
 				);
+			}
+
+			function resetCaravan(){
+				car_mem = caravan.members;
+				caravan = new Caravan(caravan.day, caravan.job);
+				caravan.members = car_mem;
 			}
 
 			//In an ideal world, this wouldn't.  I hope it doesn't break.
@@ -560,14 +567,21 @@
 					}
 					else if(seq_c == 0 && key_code == 13) {
 						if($('.frame-store').find('#store-choice').html() == 8){
-							item_being_bought = 0;
-							loadInteract(weather);
-							$('.frame-store').find('#store-choice').html("");
-							$('.frame-store').hide();
-							$('.frame-interact').show();
+							if(caravan.fort == 1 && caravan.oxen > 1){
+								item_being_bought = 0;
+								loadInteract(weather);
+								$('.frame-store').find('#store-choice').html("");
+								$('.frame-store').hide();
+								$('.frame-interact').show();
+							} else{
+								resetCaravan();
+								$('.frame-store').find('#store-choice').html("");
+								$('.frame-store').find('#store-choice2').html("");
+								loadStore();
+							}
 						} else {
-							item_being_bought = $('.frame-store').find('#store-choice').html()
-							console.log("Item", item_being_bought);
+							item_being_bought = $('.frame-store').find('#store-choice').html();
+							console.log("Item:", item_being_bought);
 							$('.frame-store').find('#s_num').show();
 							seq_c = 1;
 						}
