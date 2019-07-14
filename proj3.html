@@ -40,6 +40,7 @@
 					loadInteract(getWeather()); 
 					//If checkForDead returns a non-falsey value, keep calling it.
 					dead = caravan.checkForDead()
+					
 					while(dead){
 						if (dead == -1) { //game over
 							console.log("Here Lies Potato");
@@ -71,6 +72,12 @@
 					loadData(getWeather());  //critical
 
 					//Handle landmarks
+					landmark = caravan.hitLandmark;
+					if(landmark){
+						//handle landmark
+					}
+
+					//Handle splits
 					if(caravan.nextLandmark == "flag1"){ //testing
 						caravan.goToGreenRiver();
 					}
@@ -88,21 +95,25 @@
 						}
 					}
 
-					//If there was an event...
-					if(eventID){
-						//clear it.
-						eventID = "";
-						//If the event did not lock the travel, terminate travel.
-						if(!caravan.eventLocked){
-							clearInterval(travID);
-						}
-					//If the travel was locked for 1 day at the start of the function,
-					//the event has just finished and travel() needs to stop.
-					} else if(isLocked == 1){
-						clearInterval(travID);						
-					}
+					cleanEvents(isLocked)
 					
 				}, 2000); //every 2 seconds.
+			}
+
+			function cleanEvents(isLocked){
+				//If there was an event...
+				if(eventID){
+					//clear it.
+					eventID = "";
+					//If the event did not lock the travel, terminate travel.
+					if(!caravan.eventLocked){
+						clearInterval(travID);
+					}
+				//If the travel was locked for 1 day at the start of the function,
+				//the event has just finished and travel() needs to stop.
+				} else if(isLocked == 1){
+					clearInterval(travID);						
+				}
 			}
 
 			//Make an event pop-up.
@@ -178,7 +189,7 @@
 				} else if(item == 2) {
 					caravan.clothes += parseInt(number);
 				} else if(item == 3) {
-					caravan.ammo += parseInt(number) * 20;
+					caravn.ammo += parseInt(number) * 20;
 				} else if(item == 4) {
 					caravan.wheel += parseInt(number);
 				} else if(item == 5) {
@@ -699,6 +710,7 @@
 	<div class="frame frame-travel" style="display: none;">
 		<img id="wagon" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
 		<img id="location" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
+		<img id="landmarks" height="0px" width="0px" src="./oregon_trail_sprites/ot_locations.gif">
 		<canvas id="myCanvas" width="600" height="190" style="border:0px solid black;"></canvas>
 		<p id="info" class="size_up" style="font-family:georgia">
 				Press enter to size up the situation.
@@ -879,12 +891,13 @@
 		<p id="rations-choice" > 
 		</p>
 	</div>
-	<img id="wagon" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
-	<img id="location" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
 	<!-- The canvas for the panning background -->
-	<canvas id="river" height="430px" width="625px">
-			Your browser does not support canvas. Please try again with a different browser.
-	</canvas>
+	<canvas id="river" class="frame"></canvas>
+	<canvas id="places" class="frame"></canvas>
+	<script> 
+		$("river").hide();
+		$("places").hide();
+	</script>	
 
 </body>
 </html>
