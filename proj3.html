@@ -37,7 +37,7 @@
 			caravan.pace = 1;
 			//Function to make oxen walk and stuff happen while traveling.
 			function travel(){
-				console.log(caravan.members)
+				console.log(caravan.money)
 				//Repeat an arbitrary number of times...
 				travID = setInterval ( () => {
 					var isLocked = caravan.eventLocked;
@@ -73,14 +73,6 @@
 					loadInteract(getWeather());  //testing
 					//Update the page
 					loadData(getWeather());  //critical
-
-					//Handle splits
-					if(caravan.nextLandmark == "flag1"){ //testing
-						caravan.goToGreenRiver();
-					}
-					else if(caravan.nextLandmark == "flag2"){ //also testing
-						caravan.goToTheDalles();
-					}
 
 					//Animate the wagon moving.
 					dist = caravan.target_distance - caravan.distance;
@@ -160,9 +152,11 @@
 			//Function to handle buying things at forts.  Pass it the item number and quantity and
 			//it will do the rest
 			function buyThings(item, number){
+				number = parseInt(number);
 				console.log("Buying Things:", item, number)
 				var fort_cost = 1;
 				var item_cost = 0;
+				console.log("Current fort: ", caravan.fort);
 				if(caravan.fort){
 					fort_cost += (caravan.fort - 1) / 4; 
 				}
@@ -170,6 +164,7 @@
 				if(item == 1){
 					item_cost = OXEN;
 					if(caravan.oxen + number > 20){
+						console.log("Too many oxen.")
 						return -1;
 					}
 				} else if(item == 2) {
@@ -185,10 +180,12 @@
 				} else if(item == 7) {
 					item_cost = FOOD;
 					if(caravan.food + number > 2000){
+						console.log("Too much food.", caravan.food, number)
 						return -1;
 					}
 				}
 
+				console.log("Item cost:", item_cost, "Fort cost:", fort_cost);
 				if(item_cost * number * fort_cost > caravan.money){
 					return false;
 				}
@@ -341,6 +338,28 @@
 				$('.frame-interact').find('.status').html(
 					"&nbsp;&nbsp;Weather: " + weather + "<br>&nbsp;&nbsp;Health: " + caravan.partyHealth() + "<br>&nbsp;&nbsp;Pace: " + getPace() + "<br>&nbsp;&nbsp;Rations: " + getRations() + "<br>"
 				);
+
+				var str = 	"&nbsp;&nbsp;You may: <br><br>" +
+							"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. Continue on trail<br>" +
+							"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. Check supplies<br>" +
+							"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3. Look at map<br>" +
+							"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4. Change pace<br>" +
+							"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5. Change food rations<br>" +
+							"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6. Stop to rest<br>" +
+							"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7. Attempt to trade<br>" 
+				if(caravan.hitLandmark && !caravan.fort){
+					str += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8. Talk to people<br><br><br>"
+				} else if (caravan.fort){
+					str += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8. Talk to people<br>"
+					str += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;9. Buy supplies<br><br>" 
+				} else {
+					str += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8. Go fishing<br><br><br>"
+				}
+
+				str += "What is your choice?";
+
+				$('.frame-interact').find('.options').html(str);
+
 			}
 			//Load data into the ui of the travel page.
 			function loadData(weather){
@@ -350,6 +369,64 @@
 				);
 			}
 	
+			function loadMPaths(){
+				console.log(caravan.nextLandmark);
+				var str = "The trail divides here. You may:<br><br>";
+				if(caravan.nextLandmark == "flag1"){
+					str += "1. head for Green River crossing<br>2.head for Fort Bridger";
+					str += "<br><br>What is your choice?";
+					$('#mpaths_text').html(str).show();
+				} else if(caravan.nextLandmark == "flag2"){
+					str += "1. head for Fort Walla Walla<br>2.head for The Dalles";
+					str += "<br><br>What is your choice?";
+					$('#mpaths_text').html(str).show();
+				} else if(caravan.nextLandmark == "flag3"){
+					str += "1. head for the Barlow Toll Road<br>2.go down the rapids";
+					str += "<br><br>What is your choice?";
+					$('#mpaths_text').html(str).show();
+				} else if(caravan.nextLandmark == "flag4"){
+					$('.frame-travel').hide();
+					$('.frame-endgame').hide();
+				} else{
+					return 0;
+				}
+				return 1;
+			}
+
+			function processMPaths(choice){
+				if(caravan.nextLandmark == "flag1"){
+					$('#mpaths_text').html("").hide();
+					if(choice == 1){
+						caravan.goToGreenRiver();
+					} else{
+						caravan.goToFortBridger()
+					}
+				} else if(caravan.nextLandmark == "flag2"){
+					$('#mpaths_text').html("").hide();
+					if(choice == 1){
+						caravan.goToFortWallaWalla();
+					} else{
+						caravan.goToTheDalles()
+					}
+				} else if(caravan.nextLandmark == "flag3"){
+					$('#mpaths_text').html("").hide();
+					if(choice == 1 && caravan.money > 5){
+						caravan.goToBarlowTollRoad();
+					} else {
+						clearInterval(travID);
+						toTheRapids();
+					} 
+				} else{
+					return 0;
+				}
+				travel();
+			}
+
+			function toTheRapids(){
+				$('.frame-travel').hide();
+				$('.frame-unimplemented').show();
+			}
+
 			function jobAndTimeSwap(){
 				$('.frame-choice').hide();
 				$('.frame-names').show();
@@ -452,8 +529,11 @@
 									loadRiverDesc();
 									$('.frame-river').show();
 								} else {
+									var split = loadMPaths();
 									clearInterval(travID);
-									travel();
+									if(!split){
+										travel();
+									}
 								}
 							} else if ($('#landmark_res').html() == "y"){
 								seq_c = 0;
@@ -464,6 +544,16 @@
 								$('.frame-landmark').show();
 							}
 						} 
+					} else if($('#mpaths_text:visible').length){
+						if(key_code >= 49 && key_code <= 50){
+							$('.frame-travel').find('#mpaths_res').html(event.key);
+							seq_c = 10;
+						} else if (seq_c == 10 && key_code == 13){
+							seq_c = 0;
+							processMPaths(parseInt($('.frame-travel').find('#mpaths_res').html()));
+							clearInterval(travID);
+							travel();
+						}
 					} else if(key_code==13) {
 						//If key is enter, stop the game.
 						clearInterval(travID);
@@ -526,12 +616,15 @@
 								$('.frame-interact').hide();
 								loadRiverDesc();
 								$('.frame-river').show();
-							} else{ 
+							} else {
+								var split = loadMPaths();
 								loadData(weather);
 								clearInterval(travID); //This prevents warp speed.
 								$('.frame-travel').show();
 								$('.frame-interact').hide();
-								travel(); 
+								if(!split){
+									travel(); 
+								}
 							}
 						} else if(num == 2){
 							seq_c = 0;
@@ -565,6 +658,7 @@
 							seq_c = 3;
 						} else if(num == 9){
 							seq_c = 0;
+							loadStore();
 							$('.frame-interact').find('.response').html("");
 							$('.frame-interact').hide();
 							$('.frame-store').show();
@@ -583,15 +677,15 @@
 				//Handle interactions on the front page.
 				else if(activeFrame == "frame frame-intro"){
 					if(key_code >= 49 && key_code <= 51){
-						$('.frame-intro').find('#response').html(event.key);
+						$('.frame-intro').find('#in_response').html(event.key);
 					}
 					else if(key_code == 13){
-						var cur = $('.frame-intro').find('#response').html();
+						var cur = $('.frame-intro').find('#in_response').html();
 						if(cur == 1){
 							$('.frame-choice').show();
 							$('.frame-intro').hide();
 						} else if (cur == 2){
-							$('.frame-intro').find('#response').html(" ");
+							$('.frame-intro').find('#in_response').html(" ");
 							$.get( "getTen.php", function(data){
 								pairs = data.split("\n");
 								for(var i = 0; i < 10; i++){
@@ -671,14 +765,14 @@
 					}
 					else if(seq_c == .5 && key_code == 13) {
 						if($('.frame-store').find('#store-choice').html() == 8){
-							if(caravan.fort == 1 && caravan.oxen > 1){
+							if(caravan.fort > 1 || (caravan.fort == 1 && caravan.oxen > 1)){
 								seq_c = 0;
 								item_being_bought = 0;
 								loadInteract(weather);
 								$('.frame-store').find('#store-choice').html("");
 								$('.frame-store').hide();
 								$('.frame-interact').show();
-							} else{
+							} else {
 								resetCaravan();
 								$('.frame-store').find('#store-choice').html("");
 								$('.frame-store').find('#store-choice2').html("");
@@ -754,10 +848,6 @@
 							seq_c = 0;
 							$('.frame-names').find('#confirm').hide();
 						} else{
-							console.log( 
-
-
-							)
 							first = $('.frame-names').find('#names_res1').html();
 							caravan.makeMember($('.frame-names').find('#names_res1').html());
 							caravan.makeMember($('.frame-names').find('#names_res2').html());
@@ -874,6 +964,7 @@
 							}
 						}
 					} else if('#river:visible' && key_code == 32){
+						caravan.hitLandmark = "";
 						$('#river').hide();
 						clearInterval(travID);
 						$('.frame-river').hide();
@@ -895,6 +986,16 @@
 						$('.frame-landmark').hide();
 						$('.frame-interact').show();
 					}
+				} else if(activeFrame == 'frame frame-unimplemented'){
+					if(key_code == 13){
+						$('.frame-travel').hide();
+						$('.frame-interact').hide();
+						$('.frame-unimplemented').hide();
+						$('.frame-endgame').show();
+					}
+				} else if(activeFrame == 'frame frame-endgame'){
+					//score calculations
+					//hall of fame
 				}
 			});
 		});
@@ -921,6 +1022,9 @@
 		</div>
 		<p id="landmark" style="font-family:georgia;display:none;">	
 			<p id="landmark_res"></p>
+		</p>
+		<p id="mpaths_text" style="font-family:georgia;display:none;">	
+			<p id="mpaths_res"></p>
 		</p>
 		<p class="event" style="font-family:georgia;display:none;"></p>
 	</div>
@@ -1000,7 +1104,7 @@
 
 			<br><br>&nbsp;&nbsp;What is your choice?
 		</p>
-		<p id="response" style="font-family:georgia"></p>
+		<p id="in_response" style="font-family:georgia"></p>
 	</div>
 	<div class="frame frame-store" style="font-family:georgia;display:none;">
 		<p id="items">
@@ -1101,6 +1205,14 @@
 	</div>
 	<div class="frame frame-landmark">
 		<canvas id="places" height="415px" width="615px"></canvas>
+	</div>
+	<div class="frame frame-unimplemented" style="font-family:georgia;display:none;">
+		<p>We did not have time to implement this feature.</p>
+	</div>
+	<div class="frame frame-endgame">
+		<p id="items"></p>
+		<p id="data"></p>
+		<p id="score"></p>
 	</div>
 </body>
 </html>

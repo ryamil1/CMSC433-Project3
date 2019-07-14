@@ -1,14 +1,14 @@
 class Caravan {
 	constructor(day, career = "Banker") {
 		this.day = day;
-		this.distance = 0;
-		this.target_distance = 102;
+		this.distance = 930;
+		this.target_distance = 932;
 		this.weather = "clear"; //getWeather; 
 		this.pace = 1;  //expecting ui to reach in to change this when appropriate
 		this.rations = 3; //expecting ui to reach in to change this when appropriate
 		this.starving = false; //managed in setFood
 		this.location = 0; //tracks if caravan has hit fort laramie for distance calculations
-		this.nextLandmark = "Kansas River Crossing"; //needs the ui to reach in and change this based on player decisions
+		this.nextLandmark = "South Pass"; //needs the ui to reach in and change this based on player decisions
 		this.eventLocked = 0; //tracks days which need to tick for multi-day events
 		this.fort = 1;
 		this.hitLandmark = "";
@@ -39,7 +39,7 @@ class Caravan {
 			this.hitLandmark = "";
 			var gotEvent = false;
 			var randID = Math.floor(Math.random() * 100);
-			if(randID > 90){
+			if(randID > 98){
 				event = "Lost the trail. Lose " + 4 + " days.";
 				this.eventLocked = 4;
 				gotEvent = true;
