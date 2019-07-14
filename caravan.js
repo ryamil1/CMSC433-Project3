@@ -3,6 +3,7 @@ class Caravan {
 		this.day = day;
 		this.distance = 0;
 		this.target_distance = 102;
+		this.weather = "clear"; //getWeather; 
 		this.pace = 1;  //expecting ui to reach in to change this when appropriate
 		this.rations = 3; //expecting ui to reach in to change this when appropriate
 		this.starving = false; //managed in setFood
@@ -19,6 +20,7 @@ class Caravan {
 		} else if(career == "Farmer"){
 			this.money = 400;
 		}
+
 
 		this.members = [];
 		this.oxen = 0;
@@ -54,6 +56,7 @@ class Caravan {
 		});
 		this.day++;
 		return event;
+
 	}
 
 	setFood(){

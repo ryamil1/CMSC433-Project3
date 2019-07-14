@@ -5,8 +5,9 @@
 	<script src="pro3_gui.js"></script>
 	<script src="person.js"></script>	
 	<script src="caravan.js"></script>
+	<script src="rivercross.js"></script>
 	<script src=" https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-	<link rel="stylesheet" href="interact.css">
+    <link rel="stylesheet" href="interact.css">
 </head>
 <body>
 	<script>
@@ -274,27 +275,28 @@
 					value += 10;
 				}
 				if(value < 2) {
-					return weather = "cold";
+					this.weather = "cold";
 				}
 				else if(value < 32){
-					return weather = "cool";
+					this.weather = "cool";
 				}
 				else if(value < 46){
-					return weather = "rainy";
+					this.weather = "rainy";
 				}
 				else if(value < 49){
-					return weather = "very rainy";
+					this.weather = "very rainy";
 				}
 				else if(value < 71){
-					return weather = "warm";
+					this.weather = "warm";
 				}
 				else if(value < 97){
-					return weather = "hot";
+					this.weather = "hot";
 				}
 				else{
-					return weather = "very hot";
+					this.weather = "very hot";
 				}
 			}
+
 			//Load data into the interact page.
 			function loadInteract(weather){
 				$('.frame-interact').find('.header').html(
@@ -863,6 +865,12 @@
 		<p id="rations-choice" > 
 		</p>
 	</div>
+	<img id="wagon" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
+	<img id="location" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
+	<!-- The canvas for the panning background -->
+	<canvas id="river" height="430px" width="625px">
+			Your browser does not support canvas. Please try again with a different browser.
+	</canvas>
 
 </body>
 </html>
