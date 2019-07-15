@@ -28,7 +28,8 @@
 			var riverDeep = 0;
 			var riverWidth = 0;
 			var success = 0;
-			loadRiverDesc();
+			var score = 0;
+			loadEndgame();
 			var seq_c = 0;//Variable used to track where the game is in a sequence of frames, e.g. the intro.
 			//Everything in this area is for testing purposes and should be cleaned, eventually.
 			// Draw the animated canvas
@@ -381,7 +382,7 @@
 					str += "<br><br>What is your choice?";
 					$('#mpaths_text').html(str).show();
 				} else if(caravan.nextLandmark == "flag3"){
-					str += "1. head for the Barlow Toll Road<br>2.go down the rapids";
+					str += "1. head for the Barlow Toll Road ($5)<br>2.go down the rapids";
 					str += "<br><br>What is your choice?";
 					$('#mpaths_text').html(str).show();
 				} else if(caravan.nextLandmark == "flag4"){
@@ -411,10 +412,13 @@
 				} else if(caravan.nextLandmark == "flag3"){
 					$('#mpaths_text').html("").hide();
 					if(choice == 1 && caravan.money > 5){
+						caravan.money -= 5;
 						caravan.goToBarlowTollRoad();
 					} else {
 						clearInterval(travID);
+						$('.frame-travel').hide();
 						toTheRapids();
+						return 1;
 					} 
 				} else{
 					return 0;
@@ -490,6 +494,34 @@
 				caravan.members = car_mem;
 			}
 
+			function loadEndgame(){
+				parts_count = caravan.tongue+caravan.wheel+caravan.axle
+				$('.frame-endgame').find('#end_items').html(
+					caravan.members.length + " person in " + caravan.partyHealth() + "<br>" +
+					"1 wagon<br>" + caravan.oxen + " oxen<br>" + parts_count + " caravan parts<br>"+
+					caravan.clothes + " sets of clothes<br>" + caravan.ammo + " bullets<br>" + caravan.food + " pounds of food<br>" +
+					" $" + caravan.money + " cash"
+				);
+				var health_mult = 0;
+				if(caravan.partyHealth == "very poor"){
+					health_mult = 200;
+				} else if(caravan.partyHealth == "poor") {
+					health_mult = 300;
+				} else if(caravan.partyHealth == "fair"){
+					health_mult = 400;
+				} else {
+					health_mult = 500;
+				}
+				$('.frame-endgame').find('#end_data').html(
+					caravan.members.length * health_mult + "<br>" + "50<br>" + caravan.oxen * 4 + "<br>" + parts_count * 2 + "<br>"
+					+ caravan.clothes * 2 + "<br>" + caravan.ammo / 50 + "<br>" + caravan.food / 25 + "<br>" + caravan.money / 5
+				);
+				score = caravan.members.length * health_mult + caravan.oxen * 4 + 50 + parts_count * 2 + caravan.clothes * 2 + caravan.ammo / 50 + caravan.food / 25 + caravan.money / 5;
+				$('.frame-endgame').find('#score').html(
+					score
+				);
+			}
+
 			//In an ideal world, this wouldn't.  I hope it doesn't break.
 			//Handles key press events.
 			$(document).keydown(function(){
@@ -550,9 +582,11 @@
 							seq_c = 10;
 						} else if (seq_c == 10 && key_code == 13){
 							seq_c = 0;
-							processMPaths(parseInt($('.frame-travel').find('#mpaths_res').html()));
+							var stop = processMPaths(parseInt($('.frame-travel').find('#mpaths_res').html()));
 							clearInterval(travID);
-							travel();
+							if(!stop){
+								travel();
+							}
 						}
 					} else if(key_code==13) {
 						//If key is enter, stop the game.
@@ -667,9 +701,7 @@
 				}
 				//Handle interactions on the hall of fame page.
 				else if(activeFrame == "frame frame-hall"){
-					//If the game is over, let them enter letters.
-					if(0){}
-					else if(key_code==32){
+					if(key_code==32){
 						$('.frame-hall').hide();
 						$('.frame-intro').show();
 					}
@@ -687,6 +719,8 @@
 						} else if (cur == 2){
 							$('.frame-intro').find('#in_response').html(" ");
 							$.get( "getTen.php", function(data){
+								$('.frame-hall').find('#players').html("");
+								$('.frame-hall').find('#scores').html("");
 								pairs = data.split("\n");
 								for(var i = 0; i < 10; i++){
 									player = pairs[i].split(',');
@@ -991,11 +1025,36 @@
 						$('.frame-travel').hide();
 						$('.frame-interact').hide();
 						$('.frame-unimplemented').hide();
+						loadEndgame();
 						$('.frame-endgame').show();
 					}
 				} else if(activeFrame == 'frame frame-endgame'){
-					//score calculations
-					//hall of fame
+					if(key_code >= 65 && key_code <= 90){
+						$('#endgame_response').append(event.key);
+					} else if(key_code == 13){
+						//call insert php
+						$.post( "insert.php", { name: $('#endgame_response').html(), score: score }, function(data){
+								console.log(data);
+						});
+						
+						setTimeout(function(){
+							console.log('after');
+						},500);
+
+						$.get( "getTen.php", function(data){
+							$('.frame-hall').find('#players').html("");
+							$('.frame-hall').find('#scores').html("");
+							pairs = data.split("\n");
+							for(var i = 0; i < 10; i++){
+								player = pairs[i].split(',');
+								$('.frame-hall').find('#players').append(player[0] + "<br>");
+								$('.frame-hall').find('#scores').append(player[1] + "<br>");
+							}
+						});
+
+						$('.frame-endgame').hide();
+						$('.frame-hall').show();
+					}
 				}
 			});
 		});
@@ -1203,16 +1262,19 @@
 		<p id="choice_text" style="display:none;"></p>
 		<p id="river_res"></p>
 	</div>
-	<div class="frame frame-landmark">
+	<div class="frame frame-landmark" style="font-family:georgia;display:none;">
 		<canvas id="places" height="415px" width="615px"></canvas>
 	</div>
 	<div class="frame frame-unimplemented" style="font-family:georgia;display:none;">
 		<p>We did not have time to implement this feature.</p>
 	</div>
-	<div class="frame frame-endgame">
-		<p id="items"></p>
-		<p id="data"></p>
+	<div class="frame frame-endgame" style="font-family:georgia;display:none;">
+		<p id="end_items">
+		</p>
+		<p id="end_data"></p>
 		<p id="score"></p>
+		<p id="prompt">You may enter your name for the records:</p>
+		<p id="endgame_response">ttttt</p>
 	</div>
 </body>
 </html>
