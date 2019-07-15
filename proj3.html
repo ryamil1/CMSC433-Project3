@@ -975,12 +975,12 @@
 							$('#river').show();
 							crossRiver("caulk", success);
 						} else if (response == 3){
+							if(suc_val < 90){
+								success = true;
+							} else{
+								success = false;
+							}
 							if(caravan.hitLandmark == "Snake River Crossing"){
-								if(suc_val < 90){
-									success = true;
-								} else{
-									success = false;
-								}
 								if(caravan.clothes >= 2){
 									caravan.clothes -= 2;
 									$('#river_header').hide();
