@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Ryan Miller and Kyle Castle -->
 <html>
 <head>
 	<meta charset=utf-8 />
@@ -25,6 +26,11 @@
 			var item_being_bought = 0;
 			var eventID = "";
 			var first;
+			var riverDeep = 0;
+			var riverWidth = 0;
+			var success = 0;
+			var score = 0;
+			loadEndgame();
 			var seq_c = 0;//Variable used to track where the game is in a sequence of frames, e.g. the intro.
 			//Everything in this area is for testing purposes and should be cleaned, eventually.
 			// Draw the animated canvas
@@ -33,7 +39,7 @@
 			caravan.pace = 1;
 			//Function to make oxen walk and stuff happen while traveling.
 			function travel(){
-				console.log(caravan.members)
+				console.log(caravan.money)
 				//Repeat an arbitrary number of times...
 				travID = setInterval ( () => {
 					var isLocked = caravan.eventLocked;
@@ -70,20 +76,6 @@
 					//Update the page
 					loadData(getWeather());  //critical
 
-					//Handle landmarks
-					landmark = caravan.hitLandmark;
-					if(landmark){
-						//handle landmark
-					}
-
-					//Handle splits
-					if(caravan.nextLandmark == "flag1"){ //testing
-						caravan.goToGreenRiver();
-					}
-					else if(caravan.nextLandmark == "flag2"){ //also testing
-						caravan.goToTheDalles();
-					}
-
 					//Animate the wagon moving.
 					dist = caravan.target_distance - caravan.distance;
 					console.log("Distance to Next Landmark: ", dist);
@@ -94,7 +86,15 @@
 						}
 					}
 
-					cleanEvents(isLocked)
+					//Handle landmarks
+					landmark = caravan.hitLandmark;
+					if(landmark){
+						handleLandmark(landmark, isLocked);
+					}
+
+					cleanEvents(isLocked);
+
+
 					
 				}, 2000); //every 2 seconds.
 			}
@@ -123,6 +123,13 @@
 				$('.frame:visible').find('.event').show();
 			}
 
+			function isRiver(){
+				if(caravan.hitLandmark == "Kansas River Crossing" || caravan.hitLandmark == "Big Blue River Crossing" || caravan.hitLandmark == "Green River" || caravan.hitLandmark == "Snake River Crossing"){
+					return true;
+				}
+				return false;
+			}
+
 			//Convert pace into words.
 			function getPace(){
 				if(caravan.pace == 1){
@@ -147,9 +154,11 @@
 			//Function to handle buying things at forts.  Pass it the item number and quantity and
 			//it will do the rest
 			function buyThings(item, number){
+				number = parseInt(number);
 				console.log("Buying Things:", item, number)
 				var fort_cost = 1;
 				var item_cost = 0;
+				console.log("Current fort: ", caravan.fort);
 				if(caravan.fort){
 					fort_cost += (caravan.fort - 1) / 4; 
 				}
@@ -157,6 +166,7 @@
 				if(item == 1){
 					item_cost = OXEN;
 					if(caravan.oxen + number > 20){
+						console.log("Too many oxen.")
 						return -1;
 					}
 				} else if(item == 2) {
@@ -172,10 +182,12 @@
 				} else if(item == 7) {
 					item_cost = FOOD;
 					if(caravan.food + number > 2000){
+						console.log("Too much food.", caravan.food, number)
 						return -1;
 					}
 				}
 
+				console.log("Item cost:", item_cost, "Fort cost:", fort_cost);
 				if(item_cost * number * fort_cost > caravan.money){
 					return false;
 				}
@@ -251,6 +263,18 @@
 				);
 			}
 
+			function handleLandmark(landmark, isLocked){
+				clearInterval(travID);
+				loadLandmark(landmark);
+				cleanEvents(isLocked);
+			}
+
+			function loadLandmark(landmark){
+				var str = "You are now at the " + landmark + ". Would you like to look around?<br>"
+				$('.frame-travel').find('#landmark').html(str);
+				$('.frame-travel').find('#landmark').show();
+			}
+
 			//Translate the date from number to a date.
 			function getDate(){
 				if(caravan.day > 273) {
@@ -316,6 +340,28 @@
 				$('.frame-interact').find('.status').html(
 					"&nbsp;&nbsp;Weather: " + weather + "<br>&nbsp;&nbsp;Health: " + caravan.partyHealth() + "<br>&nbsp;&nbsp;Pace: " + getPace() + "<br>&nbsp;&nbsp;Rations: " + getRations() + "<br>"
 				);
+
+				var str = 	"&nbsp;&nbsp;You may: <br><br>" +
+							"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1. Continue on trail<br>" +
+							"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2. Check supplies<br>" +
+							"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3. Look at map<br>" +
+							"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4. Change pace<br>" +
+							"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5. Change food rations<br>" +
+							"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6. Stop to rest<br>" +
+							"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7. Attempt to trade<br>" 
+				if(caravan.hitLandmark && !caravan.fort){
+					str += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8. Talk to people<br><br><br>"
+				} else if (caravan.fort){
+					str += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8. Talk to people<br>"
+					str += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;9. Buy supplies<br><br>" 
+				} else {
+					str += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8. Go fishing<br><br><br>"
+				}
+
+				str += "What is your choice?";
+
+				$('.frame-interact').find('.options').html(str);
+
 			}
 			//Load data into the ui of the travel page.
 			function loadData(weather){
@@ -325,6 +371,67 @@
 				);
 			}
 	
+			function loadMPaths(){
+				console.log(caravan.nextLandmark);
+				var str = "The trail divides here. You may:<br><br>";
+				if(caravan.nextLandmark == "flag1"){
+					str += "1. head for Green River crossing<br>2.head for Fort Bridger";
+					str += "<br><br>What is your choice?";
+					$('#mpaths_text').html(str).show();
+				} else if(caravan.nextLandmark == "flag2"){
+					str += "1. head for Fort Walla Walla<br>2.head for The Dalles";
+					str += "<br><br>What is your choice?";
+					$('#mpaths_text').html(str).show();
+				} else if(caravan.nextLandmark == "flag3"){
+					str += "1. head for the Barlow Toll Road ($5)<br>2.go down the rapids";
+					str += "<br><br>What is your choice?";
+					$('#mpaths_text').html(str).show();
+				} else if(caravan.nextLandmark == "flag4"){
+					$('.frame-travel').hide();
+					$('.frame-endgame').hide();
+				} else{
+					return 0;
+				}
+				return 1;
+			}
+
+			function processMPaths(choice){
+				if(caravan.nextLandmark == "flag1"){
+					$('#mpaths_text').html("").hide();
+					if(choice == 1){
+						caravan.goToGreenRiver();
+					} else{
+						caravan.goToFortBridger()
+					}
+				} else if(caravan.nextLandmark == "flag2"){
+					$('#mpaths_text').html("").hide();
+					if(choice == 1){
+						caravan.goToFortWallaWalla();
+					} else{
+						caravan.goToTheDalles()
+					}
+				} else if(caravan.nextLandmark == "flag3"){
+					$('#mpaths_text').html("").hide();
+					if(choice == 1 && caravan.money > 5){
+						caravan.money -= 5;
+						caravan.goToBarlowTollRoad();
+					} else {
+						clearInterval(travID);
+						$('.frame-travel').hide();
+						toTheRapids();
+						return 1;
+					} 
+				} else{
+					return 0;
+				}
+				travel();
+			}
+
+			function toTheRapids(){
+				$('.frame-travel').hide();
+				$('.frame-unimplemented').show();
+			}
+
 			function jobAndTimeSwap(){
 				$('.frame-choice').hide();
 				$('.frame-names').show();
@@ -351,10 +458,69 @@
 				);
 			}
 
+			function loadRiverDesc(){
+				$('#river_header').html(
+					caravan.hitLandmark + "<br>" + getDate()
+				).show();
+				riverDeep = Math.floor(Math.random() * 10)
+				riverWidth = Math.floor(Math.random() * 300)
+				$('.frame-river').find('#description').html(
+					"You must cross the river in order to continue.  The river at this point is " + riverWidth + " feet across and " + riverDeep + " feet deep in the middle."
+				).show();
+				
+			}
+
+			function loadRiverChoice(){
+				var str = 	"Weather: " + weather + "<br>" +
+							"River width: " + riverWidth + "<br>" +
+							"River depth: " + riverDeep + "<br>" +
+							"<br>You may:<br><br>1. attempt to ford the river<br>2. caulk the wagon and float it across";
+
+				if(caravan.hitLandmark == "Kansas River Crossing" || caravan.hitLandmark == "Green River"){
+					str += "<br>3. pay for a ferry ($5, may have to wait)";
+				} else if (caravan.hitLandmark == "Snake River Crossing"){
+					str += "<br>3. look for a Shoshone guide (trade 2 clothes)";
+				} else {
+					str += "<br>";
+				}
+
+				str += "<br><br>What is your choice?"
+
+				$('.frame-river').find('#choice_text').html(str).show();
+			}
+
 			function resetCaravan(){
 				car_mem = caravan.members;
 				caravan = new Caravan(caravan.day, caravan.job);
 				caravan.members = car_mem;
+			}
+
+			function loadEndgame(){
+				parts_count = caravan.tongue+caravan.wheel+caravan.axle
+				$('.frame-endgame').find('#end_items').html(
+					caravan.members.length + " person in " + caravan.partyHealth() + "<br>" +
+					"1 wagon<br>" + caravan.oxen + " oxen<br>" + parts_count + " caravan parts<br>"+
+					caravan.clothes + " sets of clothes<br>" + caravan.ammo + " bullets<br>" + caravan.food + " pounds of food<br>" +
+					" $" + caravan.money + " cash"
+				);
+				var health_mult = 0;
+				if(caravan.partyHealth == "very poor"){
+					health_mult = 200;
+				} else if(caravan.partyHealth == "poor") {
+					health_mult = 300;
+				} else if(caravan.partyHealth == "fair"){
+					health_mult = 400;
+				} else {
+					health_mult = 500;
+				}
+				$('.frame-endgame').find('#end_data').html(
+					caravan.members.length * health_mult + "<br>" + "50<br>" + caravan.oxen * 4 + "<br>" + parts_count * 2 + "<br>"
+					+ caravan.clothes * 2 + "<br>" + caravan.ammo / 50 + "<br>" + caravan.food / 25 + "<br>" + caravan.money / 5
+				);
+				score = caravan.members.length * health_mult + caravan.oxen * 4 + 50 + parts_count * 2 + caravan.clothes * 2 + caravan.ammo / 50 + caravan.food / 25 + caravan.money / 5;
+				$('.frame-endgame').find('#score').html(
+					score
+				);
 			}
 
 			//In an ideal world, this wouldn't.  I hope it doesn't break.
@@ -377,6 +543,51 @@
 							$('.frame-travel').find('.event').hide();
 							$('.frame-travel').hide();
 							$('.frame-interact').show();
+						}
+					//If the landmark prompt is up...
+					} else if($('#landmark:visible').length){
+						if(key_code == 89){
+							$('#landmark_res').html("y");
+							seq_c = 1;
+						} else if (key_code == 78){
+							$('#landmark_res').html("n");
+							seq_c = 1
+						} else if (seq_c == 1 && key_code == 13){
+							if($('#landmark_res').html() == "n"){
+								seq_c = 0;
+								$('#landmark_res').html("");
+								$('#landmark').hide();
+								if(isRiver()){
+									$('.frame-travel').hide();
+									loadRiverDesc();
+									$('.frame-river').show();
+								} else {
+									var split = loadMPaths();
+									clearInterval(travID);
+									if(!split){
+										travel();
+									}
+								}
+							} else if ($('#landmark_res').html() == "y"){
+								seq_c = 0;
+								$('#landmark_res').html("");
+								$('#landmark').hide();
+								$('.frame-travel').hide();
+								showLandmark(caravan.hitLandmark);
+								$('.frame-landmark').show();
+							}
+						} 
+					} else if($('#mpaths_text:visible').length){
+						if(key_code >= 49 && key_code <= 50){
+							$('.frame-travel').find('#mpaths_res').html(event.key);
+							seq_c = 10;
+						} else if (seq_c == 10 && key_code == 13){
+							seq_c = 0;
+							var stop = processMPaths(parseInt($('.frame-travel').find('#mpaths_res').html()));
+							clearInterval(travID);
+							if(!stop){
+								travel();
+							}
 						}
 					} else if(key_code==13) {
 						//If key is enter, stop the game.
@@ -435,11 +646,21 @@
 						}
 						else if(num == 1){
 							seq_c = 0;
-							clearInterval(travID); //This prevents warp speed.
-							$('.frame-travel').show();
-							$('.frame-interact').hide();
 							$('.frame-interact').find('.response').html("");
-							travel();
+							if(isRiver()){
+								$('.frame-interact').hide();
+								loadRiverDesc();
+								$('.frame-river').show();
+							} else {
+								var split = loadMPaths();
+								loadData(weather);
+								clearInterval(travID); //This prevents warp speed.
+								$('.frame-travel').show();
+								$('.frame-interact').hide();
+								if(!split){
+									travel(); 
+								}
+							}
 						} else if(num == 2){
 							seq_c = 0;
 							loadSupplies();
@@ -472,6 +693,7 @@
 							seq_c = 3;
 						} else if(num == 9){
 							seq_c = 0;
+							loadStore();
 							$('.frame-interact').find('.response').html("");
 							$('.frame-interact').hide();
 							$('.frame-store').show();
@@ -480,9 +702,7 @@
 				}
 				//Handle interactions on the hall of fame page.
 				else if(activeFrame == "frame frame-hall"){
-					//If the game is over, let them enter letters.
-					if(0){}
-					else if(key_code==32){
+					if(key_code==32){
 						$('.frame-hall').hide();
 						$('.frame-intro').show();
 					}
@@ -490,16 +710,18 @@
 				//Handle interactions on the front page.
 				else if(activeFrame == "frame frame-intro"){
 					if(key_code >= 49 && key_code <= 51){
-						$('.frame-intro').find('#response').html(event.key);
+						$('.frame-intro').find('#in_response').html(event.key);
 					}
 					else if(key_code == 13){
-						var cur = $('.frame-intro').find('#response').html();
+						var cur = $('.frame-intro').find('#in_response').html();
 						if(cur == 1){
 							$('.frame-choice').show();
 							$('.frame-intro').hide();
 						} else if (cur == 2){
-							$('.frame-intro').find('#response').html(" ");
+							$('.frame-intro').find('#in_response').html(" ");
 							$.get( "getTen.php", function(data){
+								$('.frame-hall').find('#players').html("");
+								$('.frame-hall').find('#scores').html("");
 								pairs = data.split("\n");
 								for(var i = 0; i < 10; i++){
 									player = pairs[i].split(',');
@@ -574,16 +796,18 @@
 				else if (activeFrame == "frame frame-store"){
 					if(seq_c == 0 && key_code >= 49 && key_code <= 56){
 						$('.frame-store').find('#store-choice').html(event.key);
+						seq_c = .5;
 					}
-					else if(seq_c == 0 && key_code == 13) {
+					else if(seq_c == .5 && key_code == 13) {
 						if($('.frame-store').find('#store-choice').html() == 8){
-							if(caravan.fort == 1 && caravan.oxen > 1){
+							if(caravan.fort > 1 || (caravan.fort == 1 && caravan.oxen > 1)){
+								seq_c = 0;
 								item_being_bought = 0;
 								loadInteract(weather);
 								$('.frame-store').find('#store-choice').html("");
 								$('.frame-store').hide();
 								$('.frame-interact').show();
-							} else{
+							} else {
 								resetCaravan();
 								$('.frame-store').find('#store-choice').html("");
 								$('.frame-store').find('#store-choice2').html("");
@@ -595,9 +819,10 @@
 							$('.frame-store').find('#s_num').show();
 							seq_c = 1;
 						}
-					} else if (seq_c == 1 && key_code >= 48 && key_code <= 57){
+					} else if ((seq_c == 1 || seq_c == 1.5) && key_code >= 48 && key_code <= 57){
 						$('.frame-store').find('#store-choice2').append(event.key);
-					} else if (key_code == 13){
+						seq_c = 1.5;
+					} else if (seq_c == 1.5 && key_code == 13){
 						buyThings(item_being_bought, $('.frame-store').find('#store-choice2').html());
 						$('.frame-store').find('#store-choice').html("");
 						$('.frame-store').find('#store-choice2').html("");
@@ -658,10 +883,6 @@
 							seq_c = 0;
 							$('.frame-names').find('#confirm').hide();
 						} else{
-							console.log( 
-
-
-							)
 							first = $('.frame-names').find('#names_res1').html();
 							caravan.makeMember($('.frame-names').find('#names_res1').html());
 							caravan.makeMember($('.frame-names').find('#names_res2').html());
@@ -677,7 +898,9 @@
 				} else if(activeFrame == "frame frame-pace"){
 					if(key_code >= 49 && key_code <= 51){
 						$('.frame-pace').find('#pace-choice').html(event.key);
-					} else if(key_code == 13){
+						seq_c = 1;
+					} else if(seq_c == 1 && key_code == 13){
+						seq_c = 0;
 						caravan.pace = $('.frame-pace').find('#pace-choice').html()/ 2 + 0.5;
 						$('.frame-pace').hide();
 						$('.frame-interact').show();
@@ -688,7 +911,9 @@
 				else if(activeFrame == "frame frame-rations"){
 					if(key_code >= 49 && key_code <= 51){
 						$('.frame-rations').find('#rations-choice').html(event.key);
-					} else if(key_code == 13){
+						seq_c = 1;
+					} else if(seq_c == 1 && key_code == 13){
+						seq_c = 0;
 						caravan.rations = 4 - $('.frame-rations').find('#rations-choice').html();
 						$('.frame-rations').hide();
 						$('.frame-interact').show();
@@ -701,6 +926,136 @@
 						$('.frame-supplies').hide();
 						$('.frame-interact').show();
 					}
+				} else if(activeFrame == "frame frame-river"){
+					if($('#description:visible').length && key_code == 32){
+						$('#description:visible').hide();
+						loadRiverChoice();
+					} else if($('#choice_text:visible') && key_code >= 49 && key_code <= 51){
+						$('.frame-river').find('#river_res').html(event.key);
+						seq_c = 1;
+					} else if($('#choice_text:visible') && seq_c == 1 && key_code == 13){
+						var response = parseInt($('.frame-river').find('#river_res').html());
+						$('.frame-river').find('#river_res').html("");
+						seq_c = 0;
+						var suc_val = Math.floor(Math.random() * 100);
+						if(response == 1){
+							if(riverDeep > 3){
+								if(suc_val > 75){
+									success = true;
+								} else{
+									success = false;
+								}
+							} else {
+								if(suc_val > 75){
+									success = false;
+								} else{
+									success = true;
+								}
+							}
+							$('#river_header').hide();
+							$('#choice_text').hide();
+							$('#river').show();
+							crossRiver("ford", success);
+						} else if (response == 2){
+							if(riverDeep > 7){
+								if(suc_val > 80){
+									success = true;
+								} else{
+									success = false;
+								}
+							} else {
+								if(suc_val > 80){
+									success = false;
+								} else{
+									success = true;
+								}
+							}
+							$('#river_header').hide();
+							$('#choice_text').hide();
+							$('#river').show();
+							crossRiver("caulk", success);
+						} else if (response == 3){
+							if(suc_val < 90){
+								success = true;
+							} else{
+								success = false;
+							}
+							if(caravan.hitLandmark == "Snake River Crossing"){
+								if(caravan.clothes >= 2){
+									caravan.clothes -= 2;
+									$('#river_header').hide();
+									$('#choice_text').hide();
+									$('#river').show();
+									crossRiver("ferry", success);
+								}
+							} else if (caravan.hitLandmark == "Kansas River Crossing" || caravan.hitLandmark == "Green River"){
+								if(caravan.money >= 5){
+									caravan.money -= 5;
+									$('#river_header').hide();
+									$('#choice_text').hide();
+									$('#river').show();
+									crossRiver("ferry", success);
+								}
+							}
+						}
+					} else if('#river:visible' && key_code == 32){
+						caravan.hitLandmark = "";
+						$('#river').hide();
+						clearInterval(travID);
+						$('.frame-river').hide();
+						$('.frame-travel').show();
+						console.log(success);
+						if(!success){
+							var text = caravan.loseRandom();
+							if(text != ""){
+								makeEvent(text);
+							} else{
+								makeEvent("Nothing lost.");
+							}
+						} else{
+							travel();
+						}
+					}
+				} else if(activeFrame == 'frame frame-landmark'){
+					if(key_code == 13){
+						$('.frame-landmark').hide();
+						$('.frame-interact').show();
+					}
+				} else if(activeFrame == 'frame frame-unimplemented'){
+					if(key_code == 13){
+						$('.frame-travel').hide();
+						$('.frame-interact').hide();
+						$('.frame-unimplemented').hide();
+						loadEndgame();
+						$('.frame-endgame').show();
+					}
+				} else if(activeFrame == 'frame frame-endgame'){
+					if(key_code >= 65 && key_code <= 90){
+						$('#endgame_response').append(event.key);
+					} else if(key_code == 13){
+						//call insert php
+						$.post( "insert.php", { name: $('#endgame_response').html(), score: score }, function(data){
+								console.log(data);
+						});
+						
+						setTimeout(function(){
+							console.log('after');
+						},500);
+
+						$.get( "getTen.php", function(data){
+							$('.frame-hall').find('#players').html("");
+							$('.frame-hall').find('#scores').html("");
+							pairs = data.split("\n");
+							for(var i = 0; i < 10; i++){
+								player = pairs[i].split(',');
+								$('.frame-hall').find('#players').append(player[0] + "<br>");
+								$('.frame-hall').find('#scores').append(player[1] + "<br>");
+							}
+						});
+
+						$('.frame-endgame').hide();
+						$('.frame-hall').show();
+					}
 				}
 			});
 		});
@@ -709,6 +1064,7 @@
 	<div class="frame frame-travel" style="display: none;">
 		<img id="wagon" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
 		<img id="location" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
+		<img id="landmarks" height="0px" width="0px" src="./oregon_trail_sprites/ot_locations.gif"></img>
 		<canvas id="myCanvas" width="600" height="190" style="border:0px solid black;"></canvas>
 		<p id="info" class="size_up" style="font-family:georgia">
 				Press enter to size up the situation.
@@ -724,7 +1080,13 @@
 		<p class="data" style="font-family:georgia">
 		</p>
 		</div>
-		<p class="event" style="font-family:georgia;display: none;"></p>
+		<p id="landmark" style="font-family:georgia;display:none;">	
+			<p id="landmark_res"></p>
+		</p>
+		<p id="mpaths_text" style="font-family:georgia;display:none;">	
+			<p id="mpaths_res"></p>
+		</p>
+		<p class="event" style="font-family:georgia;display:none;"></p>
 	</div>
 	<div class="frame frame-interact" style="font-family:georgia;display:none;">
 		<p class="header" style="font-family:georgia">
@@ -790,7 +1152,7 @@
 		<p id="scores" style="font-family:georgia">
 		</p>
 	</div>
-	<div class="frame frame-intro">
+	<div class="frame frame-intro" style="">
 		<p class="title" style="font-family:georgia">
 			The Oregon Trail
 		</h1>
@@ -802,7 +1164,7 @@
 
 			<br><br>&nbsp;&nbsp;What is your choice?
 		</p>
-		<p id="response" style="font-family:georgia"></p>
+		<p id="in_response" style="font-family:georgia"></p>
 	</div>
 	<div class="frame frame-store" style="font-family:georgia;display:none;">
 		<p id="items">
@@ -889,12 +1251,31 @@
 		<p id="rations-choice" > 
 		</p>
 	</div>
-	<img id="wagon" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
-	<img id="location" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
-	<!-- The canvas for the panning background -->
-	<canvas id="river" height="430px" width="625px">
-			Your browser does not support canvas. Please try again with a different browser.
-	</canvas>
-
+	<div class="frame frame-river" style="font-family:georgia;display:none;">
+		<img id="wagon" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
+		<img id="location" height="0px" width="0px" src="./oregon_trail_sprites/ot_misc.gif">
+		<!-- The canvas for the panning background -->
+		<canvas id="river" height="402px" width="615px" style="display:none;">
+				Your browser does not support canvas. Please try again with a different browser.
+		</canvas>
+		<p id="river_header" style="display:none;"></p>
+		<p id="description" style="display:none;"></p>
+		<p id="choice_text" style="display:none;"></p>
+		<p id="river_res"></p>
+	</div>
+	<div class="frame frame-landmark" style="font-family:georgia;display:none;">
+		<canvas id="places" height="415px" width="615px"></canvas>
+	</div>
+	<div class="frame frame-unimplemented" style="font-family:georgia;display:none;">
+		<p>We did not have time to implement this feature.</p>
+	</div>
+	<div class="frame frame-endgame" style="font-family:georgia;display:none;">
+		<p id="end_items">
+		</p>
+		<p id="end_data"></p>
+		<p id="score"></p>
+		<p id="prompt">You may enter your name for the records:</p>
+		<p id="endgame_response">ttttt</p>
+	</div>
 </body>
 </html>

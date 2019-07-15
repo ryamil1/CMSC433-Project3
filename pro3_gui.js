@@ -1,3 +1,5 @@
+//Ryan Miller and Kyle Castle
+
 var tID; //we will use this variable to clear the setInterval()
 var tID2;
 
@@ -43,8 +45,8 @@ function drawGrave(player) {
 	$("#data").hide();
 	$("#info").hide();
 	$("wagon").remove();
-	c.width = 625;
-	c.height = 430;
+	c.width = 615;
+	c.height = 402;
 	var ctx = c.getContext("2d");
 	ctx.fillStyle = "black";
 	ctx.fillRect(0, 0, c.width, c.height);
@@ -231,3 +233,72 @@ function animateLandmark(distance, pace, landmark) {
 function stopAnimate(tID) {
 	clearInterval(tID);
 } //end of stopAnimate()
+
+// Display the detailed image of the landmark
+function showLandmark(landmark) {
+	var c = document.getElementById("places");
+	var ctx = c.getContext("2d"); 
+	var img = document.getElementById("landmarks");
+
+	$("myCanvas").hide();
+	$("river").show();
+	console.log(img);
+
+	if (landmark == "Kansas River Crossing") {
+		ctx.drawImage(img, 1, 1, 279, 159, 0, 0, c.width, c.height);
+	}
+	else if (landmark == "Big Blue River Crossing") {
+		ctx.drawImage(img, 1, 164, 279, 159, 0, 0, c.width, c.height);
+	}
+	else if (landmark == "Green River") {
+		ctx.drawImage(img, 1, 326, 279, 159, 0, 0, c.width, c.height);
+	}
+	else if (landmark == "Chimney Rock") {
+		ctx.drawImage(img, 1, 489, 279, 159, 0, 0, c.width, c.height);
+	}
+	else if (landmark == "Independence") {
+		ctx.drawImage(img, 1, 652, 279, 159, 0, 0, c.width, c.height);
+	}
+	else if (landmark == "Snake River Crossing") {
+		ctx.drawImage(img, 1, 813, 279, 159, 0, 0, c.width, c.height);
+	}
+	else if (landmark == "Fort Kearney") {
+		ctx.drawImage(img, 284, 1, 279, 159, 0, 0, c.width, c.height);
+	}
+	else if (landmark == "Independence Rock") {
+		ctx.drawImage(img, 284, 164, 279, 159, 0, 0, c.width, c.height);
+	}
+	else if (landmark == "Fort Laramie") {
+		ctx.drawImage(img, 284, 326, 279, 159, 0, 0, c.width, c.height);
+	}
+	else if (landmark == "Willamette Valley") {
+		ctx.drawImage(img, 284, 489, 279, 159, 0, 0, c.width, c.height);
+	}
+	else if (landmark == "The Dalles") {
+		ctx.drawImage(img, 284, 652, 279, 159, 0, 0, c.width, c.height);
+	}
+	else if (landmark == "Soda Springs") {
+		ctx.drawImage(img, 284, 813, 279, 159, 0, 0, c.width, c.height);
+	}
+	else if (landmark == "Fort Bridger") {
+		ctx.drawImage(img, 565, 1, 279, 159, 0, 0, c.width, c.height);
+	}
+	else if (landmark == "Fort Boise") {
+		ctx.drawImage(img, 565, 164, 279, 159, 0, 0, c.width, c.height);
+	}
+	else if (landmark == "Fort Walla Walla") {
+		ctx.drawImage(img, 565, 326, 279, 159, 0, 0, c.width, c.height);
+	}
+	else if (landmark == "Fort Hall") {
+		ctx.drawImage(img, 565, 489, 279, 159, 0, 0, c.width, c.height);
+	}
+	else if (landmark == "Blue Mountains") {
+		ctx.drawImage(img, 565, 652, 279, 159, 0, 0, c.width, c.height);
+	}
+	else if (landmark == "South Pass") {
+		ctx.drawImage(img, 565, 813, 279, 159, 0, 0, c.width, c.height);
+	}
+
+}
+
+

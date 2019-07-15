@@ -34,13 +34,14 @@ if (!tableExists($pdo, "high_scores")) {
 	}
 } 
 
-$sql = "SELECT name, score FROM `high_scores` order by 2 desc limit 10;";
-$sth = $pdo->prepare($sql);
-$sth->execute();
-while ($row = $sth->fetch(PDO::FETCH_ASSOC))
+$sql = "INSERT INTO `high_scores` (`Name`, `Score`, `ID`) VALUES ('".$_POST["name"]."', '".$_POST["score"]."', NULL);";
+try {
+	$pdo->exec($sql);
+}
+catch (PDOException $e)
 {
-    echo $row['name'] . "," . $row['score'];
-	echo "\n";
+	echo $e->getMessage();
+	die();
 }
 
 

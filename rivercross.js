@@ -1,3 +1,5 @@
+//Ryan Miller and Kyle Castle
+
 // Holds River Crossing Background
 var imageRepository = new function() {
 	// Define images

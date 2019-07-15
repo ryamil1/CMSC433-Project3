@@ -1,3 +1,4 @@
+/*Ryan Miller and Kyle Castle*/
 body {
 	background-color: #FFF;
 }
@@ -12,6 +13,63 @@ body {
 	top: 50px;
 	height: 420px;
 	width: 615px;
+}
+
+.frame-endgame{
+	color:white;
+}
+
+#end_items{
+	position: absolute;
+	top: 25px;
+}
+
+#end_data{
+	position: absolute;
+	top: 25px;
+	right: 25px;
+}
+
+#score{
+	position: absolute;
+	top:190px;
+	right:25px;
+}
+
+#prompt{
+	position:absolute;
+	top: 220px;
+}
+
+#endgame_response{
+	position:absolute;
+	top:220px;
+	left:350px;
+}
+
+.frame-unimplemented{
+	color:white;
+}
+
+.frame-river{
+	color:white;
+}
+
+#river_header{
+	text-align: center;
+	font-size: 22px;
+}
+
+#description{
+	position: absolute;
+	left: 100px;
+	width: 425px;
+}
+
+#river_res{
+	position: absolute;
+	left: 200px;
+	top: 288px;
 }
 
 .frame-supplies{
@@ -31,6 +89,25 @@ body {
 	background-color:black;
 }
 
+#mpaths_text{
+	color: white;
+	border-color:white;
+	border-style: solid;
+	border-width: 5px;
+	position:absolute;
+	left: 100px;
+	top: 180px;
+	width: 300px;
+	background-color:black;
+}
+
+#mpaths_res{
+	position: absolute;
+	color:white;
+	top: 280px;
+	left: 320px;
+}
+
 #alert{
 	border-color:white;
 	border-style: solid;
@@ -40,6 +117,25 @@ body {
 	top: 180px;
 	width: 125px;
 	background-color:black;
+}
+
+#landmark{
+	color: white;
+	border-color:white;
+	border-style: solid;
+	border-width: 5px;
+	position:absolute;
+	left: 100px;
+	top: 180px;
+	width: 400px;
+	background-color:black;
+}
+
+#landmark_res{
+	color: white;
+	position:absolute;
+	left: 298px;
+	top: 202px;
 }
 
 #rest{
@@ -247,9 +343,9 @@ body {
 	font-size: 22px;
 }
 
-#response{
+#in_response{
 	position: absolute;
-	top: 345px;
+	top: 350px;
 	left: 300px;
 	font-size: 22px;
 }
