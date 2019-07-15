@@ -41,10 +41,36 @@ class Caravan {
 			this.hitLandmark = "";
 			var gotEvent = false;
 			var randID = Math.floor(Math.random() * 100);
-			if(randID > 90){
-				event = "Lost the trail. Lose " + 1 + " day(s).";
+			if(randID > 98){
+				event = "Lost the trail. Lose " + 2 + " days.";
+				this.eventLocked = 2;
+				gotEvent = true;
+			} else if(randID > 96){
+				event = "You found some berries.  Gain " + 20 + "food.";
+				this.food += 20;
+			} else if(randID > 95){
+				event = "A thief broke into your wagon." + loseRandom(false);
+			} else if(randID > 93){
+				event = "Heavy Fog.  Lose " + 3 + " days."
+				this.eventLocked = 3;
+				gotEvent = true;
+			} else if(randID > 90){
+				var target = randID = Math.floor(Math.random() * this.members.length);
+				event = this.members[target] + " has come down with dysentery.";
+				this.members[target].is_diseased = true;
+			} else if(randID > 89){
+				event = "An oxen wanders away. Lose " + 1 + " day.";
 				this.eventLocked = 1;
 				gotEvent = true;
+			} else if(randID > 88){
+				event = "Bad water."
+				for(var i = 0; i < this.members.length; i++){
+					this.members[i].health -= 10;
+				}
+			} else if(randID > 85){
+				event = "Inadequate grass."
+				gotEvent = true;
+				this.setDistance(-2);
 			}
 			if(!gotEvent){
 				this.setDistance();
@@ -308,7 +334,6 @@ class Caravan {
 			this.members.splice(re_index, 1);
 		}
 
-		console.log("Checking for dead:", r_val)
 		//If nobody died, this is false, else it is the name of the dead person.
 		return r_val;
 	}
@@ -334,7 +359,7 @@ class Caravan {
 		}
 	}
 
-	loseRandom(){
+	loseRandom(death = true){
 		var target = Math.floor(Math.random() * 6);
 		var ret_string = "";
 		if(target == 0){
@@ -381,16 +406,18 @@ class Caravan {
 			}
 		}
 
-		var dead_pers = 0;
-		target = Math.floor(Math.random() * this.members.length);
-		value = Math.floor(Math.random() * 100);
-		if(value > 85){
-			ret_string += this.members[target].name + " has died."
-			dead_pers = target
+		if(death){
+			var dead_pers = 0;
+			target = Math.floor(Math.random() * this.members.length);
+			value = Math.floor(Math.random() * 100);
+			if(value > 85){
+				ret_string += this.members[target].name + " has died."
+				dead_pers = target
+			}
+			if(dead_pers){
+				this.members.splice(target, 1);
+			}	
 		}
-		if(dead_pers){
-			this.members.splice(target, 1);
-		}	
 
 		return ret_string;
 	}
