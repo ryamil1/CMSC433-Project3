@@ -112,8 +112,6 @@ function animateLandmark(distance, pace, landmark) {
 	var ctx = c.getContext("2d"); 
 	var img = document.getElementById("location");
 	var position = 340 - (distance * 7);
-	console.log(landmark);
-	console.log("Position: ", position);
 
 	// Landmarks
 	if (landmark == "Kansas River Crossing" || landmark == "Big Blue River Crossing" || landmark == "Green River" || landmark == "Snake River Crossing") {
@@ -242,7 +240,6 @@ function showLandmark(landmark) {
 
 	$("myCanvas").hide();
 	$("river").show();
-	console.log(img);
 
 	if (landmark == "Kansas River Crossing") {
 		ctx.drawImage(img, 1, 1, 279, 159, 0, 0, c.width, c.height);

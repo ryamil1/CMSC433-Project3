@@ -49,7 +49,7 @@ class Caravan {
 				event = "You found some berries.  Gain " + 20 + " food.";
 				this.food += 20;
 			} else if(randID > 95){
-				event = "A thief broke into your wagon." + loseRandom(false);
+				event = "A thief broke into your wagon." + this.loseRandom(false);
 			} else if(randID > 93){
 				event = "Heavy Fog.  Lose " + 3 + " days."
 				this.eventLocked = 3;

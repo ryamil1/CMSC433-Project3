@@ -42,7 +42,6 @@ function Background() {
 		this.y += this.speed;
         this.context.drawImage(imageRepository.background, this.x, this.y);
 
-        console.log("Method =", method);
         // draw the correct image
         if (method == "caulk") {
             this.context.drawImage(img, 270, 2, 73, 28, this.canvasWidth/2, 325, 80, 40);	
@@ -55,7 +54,6 @@ function Background() {
         }
 
         // If the image scrolled off the screen, reset
-        console.log(this.y);
         // Crossed the river
         if (this.y >= this.canvasHeight / 2) {
             this.context = null;
@@ -158,7 +156,6 @@ function crossRiver(m, res) {
     doAnim = true;
     river = new River();
 	if(river.init()) {
-        console.log("METHOD=", method);
         river.start();
     }
 }
