@@ -46,7 +46,7 @@ class Caravan {
 				this.eventLocked = 2;
 				gotEvent = true;
 			} else if(randID > 96){
-				event = "You found some berries.  Gain " + 20 + "food.";
+				event = "You found some berries.  Gain " + 20 + " food.";
 				this.food += 20;
 			} else if(randID > 95){
 				event = "A thief broke into your wagon." + loseRandom(false);
@@ -56,7 +56,7 @@ class Caravan {
 				gotEvent = true;
 			} else if(randID > 90){
 				var target = randID = Math.floor(Math.random() * this.members.length);
-				event = this.members[target] + " has come down with dysentery.";
+				event = this.members[target].name + " has come down with dysentery.";
 				this.members[target].is_diseased = true;
 			} else if(randID > 89){
 				event = "An oxen wanders away. Lose " + 1 + " day.";
