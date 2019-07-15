@@ -483,9 +483,9 @@
 
 			function loadEndgame(){
 				var score_mult = 1;
-				if(caravan.career == "Banker"){
+				if(caravan.job == "Banker"){
 					score_mult = 1;
-				} else if(caravan.career == "Carpenter"){
+				} else if(caravan.job == "Carpenter"){
 					score_mult = 2;
 				} else {
 					score_mult = 3;
@@ -1035,11 +1035,13 @@
 						$('#endgame_response').append(event.key);
 					} else if(key_code == 13){
 						//call insert php
-						$.post( "insert.php", { name: $('#endgame_response').html(), score: score }, function(data){});
+						$.post( "insert.php", { name: $('#endgame_response').html(), score: score }, function(data){
+							console.log(data);
+						});
 						
 						setTimeout(function(){
-							console.log('');
-						},500);
+							console.log('after');
+						},1500);
 
 						$.get( "getTen.php", function(data){
 							$('.frame-hall').find('#players').html("");
@@ -1286,7 +1288,7 @@
 		<p id="end_data"></p>
 		<p id="score"></p>
 		<p id="prompt">You may enter your name for the records:</p>
-		<p id="endgame_response">ttttt</p>
+		<p id="endgame_response"></p>
 	</div>
 	<div class="frame frame-advice" style="font-family:georgia;display:none;">
 		<p id="helpi">Try taking a journey by covered wagon across 2000 miles of plains, rivers, and mountains.  Try!  On the plains, will you slosh your oxen through mud and water filled ruts or will you plos through dust six inces deep?<br><br>How will you cross the rivers? If you have money, you might take a ferry (if there is one).  Or, you can ford the river and hope you aren't swallowed alive!<br><br>What about supplies?  Well, if you're low on food you can hunt.  You might get a buffalo.  Or a bear in the mountains.<br><br>At the Dalles, you can try navigating the Columbia River, but if running the rapids with a makeshift raft makes you queasy, better take the toll road.<br></p>
