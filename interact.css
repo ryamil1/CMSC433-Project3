@@ -1,4 +1,3 @@
-/*Ryan Miller and Kyle Castle*/
 body {
 	background-color: #FFF;
 }
@@ -13,6 +12,19 @@ body {
 	top: 50px;
 	height: 420px;
 	width: 615px;
+}
+
+.frame-advice{
+	font-size:20px;
+	color:white;
+}
+
+.frame-advice2{
+	font-size:20px;
+	color:white;
+	width:450px;
+	position:absolute;
+	left:100px;
 }
 
 .frame-endgame{
