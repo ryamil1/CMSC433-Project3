@@ -1,4 +1,5 @@
 <?php
+/*Ryan Miller and Kyle Castle*/
 $dbname = "rmkc_proj3";
 
 $pdo = new PDO("mysql:host=localhost", "root", "");

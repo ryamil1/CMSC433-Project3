@@ -1,3 +1,5 @@
+//Ryan Miller and Kyle Castle
+
 class Caravan {
 	constructor(day, career = "Banker") {
 		this.day = day;

@@ -1,3 +1,5 @@
+//Ryan Miller and Kyle Castle
+
 var tID; //we will use this variable to clear the setInterval()
 var tID2;
 

@@ -1,3 +1,5 @@
+//Ryan Miller and Kyle Castle
+
 class Person{
 	constructor(name){
 		this.name = name;
